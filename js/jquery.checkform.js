@@ -1,6 +1,6 @@
 (function($) {
 jQuery.fn.checkform = function(params){
-    /*We define some default selectors and patterns*/
+    /*Default patterns and selectors*/
     var defaultItems = {
         'mail':{
             'selector':'[name=email]',
