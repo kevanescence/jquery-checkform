@@ -1,9 +1,8 @@
-(function($) {
-
-    /*************************************************************/
-    /******             List of default options            *******/
-    /*************************************************************/
-    var defaultOptions = {
+/*************************************************************/
+/******             List of default options            *******/
+/*************************************************************/
+function jqchf_getDefaultOptions() {
+    return {
         type: 'text',
         event: 'submit',
         autoCheck: true,
@@ -14,6 +13,10 @@
         afterValidate: null,
         beforeValidate: null
     };
+}
+(function($) {
+
+    var defaultOptions = jqchf_getDefaultOptions();
 
     /*************************************************************/
     /******             List of available options          *******/
@@ -51,7 +54,7 @@
             console.log("update : ", content);
         }// !!!
     };
-    
+
     /*************************************************************/
     /******       List of default fields name, pattern     *******/
     /*************************************************************/
@@ -98,14 +101,14 @@
         this.each(function() {
             //Is it a method call ?
             if (methods[args]) {
-                return methods[args].apply(this, 
-                                      Array.prototype.slice.call(arguments, 1));
+                return methods[args].apply(this,
+                        Array.prototype.slice.call(arguments, 1));
             } else if (typeof args === 'object' || !args) {
                 // Default call to "init"
                 return methods.init.apply(this, arguments);
             } else {
                 //Unknown method
-                $.error('Method '+ args +' does not exist on jQuery.checkform');
+                $.error('Method ' + args + ' does not exist on jQuery.checkform');
             }
         });
         //Keep linking ...
