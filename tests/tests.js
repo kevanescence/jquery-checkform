@@ -1,17 +1,74 @@
 test("Check qunit", function() {
     ok(true, "Should always pass !")
 })
-module("Methods call");
+module("Method - init ");
 var defaultOptions = jqchf_getDefaultOptions();
-test("init", function() {
+var defaultItems = jqchf_getDefaultItems();
+/************* Context 1 : no option *************/
+test("No option", function() {    
     var context = 1;
     bindContext(context);
     var form = $("form#context" + context);
     form.checkform();
-    propEqual(jQuery.data(form, "jqchf-opt"), defaultOptions, 
+    var input = form.find("input" + defaultItems.name.selector);
+    
+    propEqual(jQuery.data(form, "jqchf-form-opt"), defaultOptions, 
                                 "Defaut values set when no option is provided");
+                                
+    var data = jQuery.data(input,"jqchf-reg");
+    equal(data, defaultItems.name.pattern,"Default pattern is initialized");
+    
+    data = jQuery.data(input,"jqchf-trim");
+    equal(data, defaultItems.name.autoTrim,"Default trim is initialized");
+    
+    data = jQuery.data(input,"jqchf-reg");
+    equal(data,undefined,'input[type="submit"] not initialized');
     removeContext(context);
 });
+/************* Context 2 : overwritting options *************/
+test("Default values are overwritten", function(){    
+    bindContext(++context);
+    form = $("form#context" + context);    
+    var options = jqchf_getDefaultOptions();
+    options.event = 'change';  
+    options.type = 'flash';
+    form.checkform(options);
+    
+    propEqual(jQuery.data(form, "jqchf-form-opt"),options,
+                                "Default values ares overwritten");
+    removeContext(context);
+});
+/********** Context 3 : create a new item and overwritting an other *******/
+test("Create a new item and overwritting an other", function(){    
+    bindContext(++context);
+    form = $("form#context" + context);
+    options.items = {
+        'newField':{
+            selector:'[name="new"]',
+            pattern:'.+'           
+        },
+        'password':{
+            pattern:'.{8,20}'
+        }
+    };
+    form.checkform(options);
+    input = form.find(options.items.newField.selector);
+    
+    data = jQuery.data(input,"jqchf-reg");
+    equal(data,options.items.newField.pattern,
+                            "jqchf-pattern : Initialization for a custom item");
+                        
+    data = jQuery.data(input,"jqchf-trim");
+    equal(data,true,"jqchf-trim : Initialization for a custom item");
+    
+    input = form.find(defaultItems.password.selector);
+    data = jQuery.data(input,"jqchf-reg");
+    equal(data,options.items.password.pattern,
+                                   "jqchf-reg: Overwritting of a default item");
+    removeContext(context);
+});
+
+module("Method - destroy ");
 test("destroy", function() {
     ok(1 == "1", "Passed!");
 });
@@ -66,23 +123,29 @@ $(function() {
 });
 
 function bindContext(ind) {
-    var context = "context" + ind;
+    var context = "context" + ind;    
     var html = '<form method="POST" action="#" id="' + context +
             '" class="test-context">';
 
     switch (ind) {
+        case 3:
+            html += '<label for="' + context + '-new">new</label>' +
+                    '<textarea id="' + context + '-new" name="new"></textarea>' +
+                    '<label for="' + context + '-pwd">password</label>' +
+                    '<input type="password" id="' + context + '-pwd" name="password"/>';
+            //break; no break 3 input introduced
         case 2:
-            html += '<label for="' + context + '-name">name</label>' +
-                    '<input id="' + context + '-name" name="name" type="text"/>';
-            //break; no break 2 input introduced
-        case 1:
             html += '<label for="' + context + '-email">email</label>' +
                     '<input id="' + context + '-email" name="email" type="text"/>';
+            //break; no break 2 input introduced
+        case 1:
+            html += '<label for="' + context + '-name">name</label>' +
+                    '<input id="' + context + '-name" name="name" type="text"/>';
             break;
         default:
             break;
-    }
-    html += '</form>';
+    }    
+    html += '<input type="submit" value="valider"/></form>';
     $('body').append(html);
 }
 function removeContext(ind) {
