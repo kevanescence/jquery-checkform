@@ -1,12 +1,15 @@
 test("Check qunit", function() {
     ok(true, "Should always pass !")
-})
+});
+/*************************************************************/
+/******       Tests of the init method                 *******/
+/*************************************************************/
 module("Method - init ");
 var defaultOptions = jqchf_getDefaultOptions();
 var defaultItems = jqchf_getDefaultItems();
 /************* Context 1 : no option *************/
-test("No option", function() {    
-    var context = 1;
+test("No option", function() {  
+    var context = 1
     bindContext(context);
     var form = $("form#context" + context);
     form.checkform();
@@ -27,8 +30,9 @@ test("No option", function() {
 });
 /************* Context 2 : overwritting options *************/
 test("Default values are overwritten", function(){    
-    bindContext(++context);
-    form = $("form#context" + context);    
+    var context = 2;
+    bindContext(context);
+    var form = $("form#context" + context);    
     var options = jqchf_getDefaultOptions();
     options.event = 'change';  
     options.type = 'flash';
@@ -39,9 +43,13 @@ test("Default values are overwritten", function(){
     removeContext(context);
 });
 /********** Context 3 : create a new item and overwritting an other *******/
-test("Create a new item and overwritting an other", function(){    
-    bindContext(++context);
-    form = $("form#context" + context);
+test("Create a new item and overwritting an other", function(){ 
+    var context = 3;
+    bindContext(context);
+    var options = jqchf_getDefaultOptions();
+    options.event = 'change';  
+    options.type = 'flash';
+    var form = $("form#context" + context);
     options.items = {
         'newField':{
             selector:'[name="new"]',
@@ -52,9 +60,9 @@ test("Create a new item and overwritting an other", function(){
         }
     };
     form.checkform(options);
-    input = form.find(options.items.newField.selector);
+    var input = form.find(options.items.newField.selector);
     
-    data = jQuery.data(input,"jqchf-reg");
+    var data = jQuery.data(input,"jqchf-reg");
     equal(data,options.items.newField.pattern,
                             "jqchf-pattern : Initialization for a custom item");
                         
@@ -67,10 +75,235 @@ test("Create a new item and overwritting an other", function(){
                                    "jqchf-reg: Overwritting of a default item");
     removeContext(context);
 });
+/********** Context 4 : Keep linking ...  *******/
+test("Verify if linking is kept", function(){ 
+    var context = 3;
+    var form = bindContext(context);
+    form.checkform().addClass("fakeClass");
+    ok(form.hasClass("fakeClass"), "Initialization keeps jQuery linking");
+    removeContext(context);
+});
+/*************************************************************/
+/******       Tests of the method check                *******/
+/*************************************************************/
+module("Method - check");
+/************* Context 1 : call on the form      *************/
+test("No paramater : check all the form",function(){
+    var defaultItems = jqchf_getDefaultItems();
+    var context = 3;
+    bindContext(context);
+    var form = $("form#context" + context);
+    form.checkform({
+        comment :{
+            selector:'[name="new"]',
+            pattern:'.+'
+        }
+    });
+    var mail = form.find(defaultItems.mail.selector).eq(0);
+    mail.val("firstname.name@domain.com");
+    var name = form.find(defaultItems.name.selctor).eq(0);
+    name.val("O'Callagan");
+    var comment = form.find('[name="new"]').eq(0);
+    comment.val("");
+    var pws = form.find(defaultItems.password.selector).eq(0);
+    pws.val("_");
+    
+    //Part 1 : All fields are except 
+    form.checkform("check");    
+    equal(jQuery.data(name,"jqchf-ok"),true, 'name value is valid');    
+    equal(jQuery.data(comment,"jqchf-ok"),false, 'comment value is wrong');
+    equal(jQuery.data(pws,"jqchf-ok"),false, 'pwd value is wrong');
+    equal(jQuery.data(form,"jqchf-ok"),false, 'Global result is wrong');
+    
+    //Part 2 : We change the comment and the password values to respect the form rules
+    comment.val("a simple comment");
+    pws.val("af4K3Pw3");    
+    form.checkform("check");
+    equal(jQuery.data(comment,"jqchf-ok"),true, 
+                                    'After changings, its status is ok');
+    equal(jQuery.data(form,"jqchf-ok"),true, 'After changings, global result is ok');
+    removeContext(context);
+});
+/************* Context 2 : call on a specific item  *************/
+test("Parameter : check the given item", function(){
+    var defaultItems = jqchf_getDefaultItems();
+    var context = 2;
+    bindContext(context);
+    var form = $("form#context" + context);
+    form.checkform({
+        items:{
+            name:{
+                autoTrim:false
+            }
+        }
+    });
+    var val = "kevanesc";
+    var item = form.find(defaultItems.mail.selector).eq(0);
+    item.val(val);
+    form.checkform("check",item);
+    var data = jQuery.data(item,"jqchf-ok");
+    equal(data,false,'Check sets jqchf-ok to false when email(=\'' + val +'\') is wrong');
+    
+    var val = '  nom.prenom@mail.fr';
+    item.val(val);
+    form.checkform("check",item);
+    equal(data,true,'Autotrim : Check sets jsqch-ok to true when email(=\'' + val +'\') is ok');
+    removeContext(context);
+    
+});
 
+/*************************************************************/
+/******       Tests of the  uiAction method            *******/
+/*************************************************************/
+module("Method - uiAction");
+/************* Context 1 : Verify uiAction with style=text  ************/
+test("style = text", function(){
+    var defaultItems = jqchf_getDefaultItems();
+    var defaultOptions = jqchf_getDefaultOptions();
+    var context = 2;
+    bindContext(context);
+    var form = $('form#context' + context);
+    form.checkform();
+    form.find(defaultItems.name.selector).val("wr0ng");
+    form.checkform("check");
+    form.checkform("uiAction");
+    
+    var nbElem = form.find(defaultOptions.CSSClass).size();
+    equal(nbElem, 1, 'Adding an html element in the form when item is wrong');
+    
+    var text = form.find(defaultOptions.CSSClass).text();
+    notEqual(text.indexOf("name"), -1,'The error message contains the field\'s label');
+    
+    form.find(defaultItems.name.selector).val("goodname");
+    form.checkform("check");
+    form.checkform("uiAction");
+    equal(nbElem, 0, 'Removing the html element when the form is ok');
+    
+    removeContext(context);
+});
+/************* Context 2 : Verify uiAction with style=label  ************/
+test("style = label", function(){
+    var defaultItems = jqchf_getDefaultItems();
+    var defaultOptions = jqchf_getDefaultOptions();
+    var context = 1;
+    var form = bindContext(context);
+    form.checkform({style:'label'});
+    var name = form.find(defaultItems.name.selector).eq(0).val("b4d Value");   
+    form.checkform("check",name);
+    form.checkform("uiAction",name);
+    ok(name.prev('label').hasClass(defaultOptions.CSSClass),
+                        'Previous label has the css class when the field is wrong');
+    name.val("Aragorn"); 
+    form.checkform("check");
+    form.checkform("uiAction",name);
+    ok(!name.prev('label').hasClass(defaultOptions.CSSClass),
+                         'Previous label class is removed when the field is ok');
+    removeContext(context);
+});
+/************* Context 3 : Verify uiAction with style=input  ************/
+test("style = input", function(){
+    var defaultItems = jqchf_getDefaultItems();
+    var defaultOptions = jqchf_getDefaultOptions();
+    var context = 1;
+    var form = bindContext(context);
+    form.checkform({style:'input'});
+    var name = form.find(defaultItems.name.selector).eq(0).val("b4d Value");    
+    form.checkform("check",name);
+    form.checkform("uiAction",name);
+    ok(name.hasClass(defaultOptions.CSSClass),
+                        'The field has the css class when the field is wrong');
+    name.val("Aragorn"); 
+    form.checkform("check");
+    form.checkform("uiAction",name);
+    ok(!name.hasClass(defaultOptions.CSSClass),
+                         'The field class is removed when the field is ok');
+    removeContext(context);
+});
+/************* Context 4 : Verify uiAction with style=flash  ************/
+test("style = flash", function(){
+    var defaultItems = jqchf_getDefaultItems();
+    var defaultOptions = jqchf_getDefaultOptions();
+    var context = 2;
+    var form = bindContext(context);    
+    form.checkform({style:'flash'});
+    form.find(defaultItems.name.selector).val("wr0ng");
+    form.checkform("check").checkform("uiAction");    
+    
+    var nbElem = form.find(defaultOptions.CSSClass).size();
+    equal(nbElem, 1, 'Adding an html element in the form when item is wrong');
+    var link = form.find(defaultOptions.CSSClass).find('a');    
+    notEqual(link.size(),0, 'Flash element contain a link to remove it');
+
+    var text = form.find(defaultOptions.CSSClass).text();
+    notEqual(text.indexOf("name"), -1,'The error message contains the field\'s label');
+    
+    link.click();    
+    nbElem = form.find(defaultOptions.CSSClass).size();
+    equal(nbElem, 0, 'A click on the link remove the flash');
+    
+    form.checkform("check").checkform("uiAction");
+    form.find(defaultItems.name.selector).val("goodname");
+    form.checkform("check");
+    form.checkform("uiAction");
+    equal(nbElem, 0, 'Removing the html element when the form is ok');
+    
+    removeContext(context);
+});
+/************* Context 5 : HTML how to verify it ? ************/
+
+/*************************************************************/
+/******       Tests of the method destroy              *******/
+/*************************************************************/
+module("Method - validate");
+test("No argument - Method is called on the form", function(){
+    var defaultItems = jqchf_getDefaultItems();
+    var defaultOptions = jqchf_getDefaultOptions();
+    var context = 3;
+    var before = 0; var after = 0;
+    var form = bindContext(context);
+    form.checkform({
+        event:'submit',
+        style:'text',
+        beforValidate:function(){before++;},
+        afterValidate:function(){after++;}
+    });
+    //Validate with wrong values
+    form.checkform("validate");
+    var mail = form.find(defaultItems.mail.selector);
+    mail.val("@bad!email@dress");
+    equal(before, 1, 'beforeValidate is executed');
+    equal(after,0, 'afterValidate is not executed if form is wrong');    
+    var messageBloc = form.find(defaultOptions.CSSClass);
+    equal(messageBloc.size(), 1, "A message is displayed when form is wrong");
+    
+    //Validate with good value
+    mail.val("a.good@email.com");
+    form.checkform("validate");
+    equal(before, 2, 'beforeValidate is still executed');
+    equal(after,1,'afterValidate is executed');    
+    messageBloc = form.find(defaultOptions.CSSClass);
+    equal(messageBloc.size(), 0, "The message bloc is removed when form is ok");
+    removeContext(context);
+});
+
+test("Argument - Method is called on a specifi item")
+/*************************************************************/
+/******       Tests of the method destroy              *******/
+/*************************************************************/
 module("Method - destroy ");
 test("destroy", function() {
-    ok(1 == "1", "Passed!");
+    var context = 1;
+    bindContext(context);
+    
+    var form = $('form#context' + context).checkform();
+    var size = form.find('[data-jqchf*=reg]').size();    
+    notEqual(size,0, 'Initialization done');
+    
+    form.checkform("destroy");
+    var size = form.find('[data-jqchf*=reg]').size();
+    equal(size,0, 'Destruction done');
+    
+    removeContext(context);
 });
 /*************************************************************/
 /******     Tests default regular expressions          *******/
@@ -116,11 +349,6 @@ test("Exception thrown", function() {
     }, /value (.*)not allowed/i,
             "beforeValidate : Exception thrown when a function was expected");
 });
-$(function() {
-//    $("form#test").checkform();
-    bindContext(2);
-    removeContext(2);
-});
 
 function bindContext(ind) {
     var context = "context" + ind;    
@@ -147,6 +375,7 @@ function bindContext(ind) {
     }    
     html += '<input type="submit" value="valider"/></form>';
     $('body').append(html);
+    return $('form#'+ context);
 }
 function removeContext(ind) {
     $("form#context" + ind).remove();

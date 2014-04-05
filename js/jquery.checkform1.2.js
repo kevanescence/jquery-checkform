@@ -92,15 +92,19 @@ function jqchf_getDefaultItems(){
          */
         init: function(options) {
             console.log(this);
+        },       
+        check:function(item){
+            console.warn("destroy : TO BE Done");
         },
-        show: function( ) {
-            console.log("show");
-        }, // IS
-        hide: function( ) {
-        }, // GOOD
-        update: function(content) {
-            console.log("update : ", content);
-        }// !!!
+        validate:function(item){
+            
+        }, 
+        uiAction:function(item){
+            console.warn("destroy : TO BE Done");
+        },
+        destroy:function(){
+            console.warn("destroy : TO BE Done");
+        }
     };
     var defaultItems = jqchf_getDefaultItems();    
 
