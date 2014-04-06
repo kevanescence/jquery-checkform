@@ -1,5 +1,5 @@
 test("Check qunit", function() {
-    ok(true, "Should always pass !")
+    ok(true, "Should always pass !");
 });
 /*************************************************************/
 /******       Tests of the init method                 *******/
@@ -9,22 +9,22 @@ var defaultOptions = jqchf_getDefaultOptions();
 var defaultItems = jqchf_getDefaultItems();
 /************* Context 1 : no option *************/
 test("No option", function() {  
-    var context = 1
+    var context = 1;
     bindContext(context);
     var form = $("form#context" + context);
     form.checkform();
     var input = form.find("input" + defaultItems.name.selector);
     
-    propEqual(jQuery.data(form, "jqchf-form-opt"), defaultOptions, 
+    propEqual(form.data("jqchf-form-opt"), defaultOptions, 
                                 "Defaut values set when no option is provided");
                                 
-    var data = jQuery.data(input,"jqchf-reg");
+    var data = input.data("jqchf-reg");
     equal(data, defaultItems.name.pattern,"Default pattern is initialized");
     
-    data = jQuery.data(input,"jqchf-trim");
+    data = input.data("jqchf-trim");
     equal(data, defaultItems.name.autoTrim,"Default trim is initialized");
     
-    data = jQuery.data(input,"jqchf-reg");
+    data = form.find('input[type="submit"]').data("jqchf-reg");
     equal(data,undefined,'input[type="submit"] not initialized');
     removeContext(context);
 });
@@ -35,10 +35,9 @@ test("Default values are overwritten", function(){
     var form = $("form#context" + context);    
     var options = jqchf_getDefaultOptions();
     options.event = 'change';  
-    options.type = 'flash';
-    form.checkform(options);
-    
-    propEqual(jQuery.data(form, "jqchf-form-opt"),options,
+    options.type = 'flash';   
+    form.checkform(options);    
+    propEqual(form.data("jqchf-form-opt"),options,
                                 "Default values ares overwritten");
     removeContext(context);
 });
@@ -56,26 +55,58 @@ test("Create a new item and overwritting an other", function(){
             pattern:'.+'           
         },
         'password':{
-            pattern:'.{8,20}'
+            pattern:'.{8,20}'            
         }
     };
     form.checkform(options);
     var input = form.find(options.items.newField.selector);
     
-    var data = jQuery.data(input,"jqchf-reg");
+    var data = input.data("jqchf-reg");    
     equal(data,options.items.newField.pattern,
                             "jqchf-pattern : Initialization for a custom item");
                         
-    data = jQuery.data(input,"jqchf-trim");
+    data = input.data("jqchf-trim");
     equal(data,true,"jqchf-trim : Initialization for a custom item");
     
     input = form.find(defaultItems.password.selector);
-    data = jQuery.data(input,"jqchf-reg");
+    data = input.data("jqchf-reg");
     equal(data,options.items.password.pattern,
                                    "jqchf-reg: Overwritting of a default item");
     removeContext(context);
 });
-/********** Context 4 : Keep linking ...  *******/
+/********** Context 4 : autoCheck=false ...  *******/
+test("Verify non initialization on default items when autoCheck=false", function(){ 
+    console.log('context4');
+    var context = 3;
+    bindContext(context);
+    var options = jqchf_getDefaultOptions();
+    options.autoCheck = 'false';    
+    var form = $("form#context" + context);
+    options.items = {
+        'newField':{
+            selector:'[name="new"]',
+            pattern:'.+'           
+        }
+    };
+    console.log(options);
+    form.checkform(options);
+    var input = form.find(options.items.newField.selector);
+    
+    var data = input.data("jqchf-reg");    
+    equal(data,options.items.newField.pattern,
+                            "jqchf-pattern : Initialization for a custom item");
+                        
+    data = input.data("jqchf-trim");
+    equal(data,true,"jqchf-trim : Initialization for a custom item");
+    
+    input = form.find(defaultItems.password.selector);    
+    data = input.data("jqchf-reg");
+    console.log(data);
+    notEqual(data,options.items.password.pattern,
+                                   "jqchf-reg: A default item is not overwritten");
+    removeContext(context);
+});
+/********** Context 5 : Keep linking ...  *******/
 test("Verify if linking is kept", function(){ 
     var context = 3;
     var form = bindContext(context);
