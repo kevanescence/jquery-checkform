@@ -255,6 +255,7 @@ test("style = flash", function(){
 /******       Tests of the method destroy              *******/
 /*************************************************************/
 module("Method - validate");
+/************* Context 1 : called on the form   ************/
 test("No argument - Method is called on the form", function(){
     var defaultItems = jqchf_getDefaultItems();
     var defaultOptions = jqchf_getDefaultOptions();
@@ -285,8 +286,48 @@ test("No argument - Method is called on the form", function(){
     equal(messageBloc.size(), 0, "The message bloc is removed when form is ok");
     removeContext(context);
 });
-
-test("Argument - Method is called on a specifi item")
+/************* Context 2 : called on a given item   ************/
+test("Argument - Method is called on a specific item",function(){
+    var defaultOptions = jqchf_getDefaultOptions();
+    var defaultItems = jqchf_getDefaultItems();
+    var context = 2;
+    var form = bindContext(context);
+    var beforeValidate = 0; var afterValidate = 0;
+    var name = form.find(defaultItems.name.selector);
+    form.checkform({
+        style:'input',
+        event:'lostfocus',
+        beforeValidate:function($item){
+            beforeValidate++;
+            $item.addClass('fakeClass');            
+        },
+        afterValidate:function($item){
+            afterValidate++;
+            $item.addClass('fakeClass2');            
+        }
+    });
+    name.val("b4dNAm3");    
+    var mail = form.find(defaultItems.mail.selector);
+    mail.val("mail@@mail.com");
+    form.checkform("validate",name);
+    ok(name.hasClass(defaultOptions.CSSClass), 
+                                 'A wrong field has the css class');
+    ok(!mail.hasClass(defaultOptions.CSSClass), 
+                                 'An other wrong field has not the css class');
+    equal(beforeValidate, 1, 'beforeValidate is always executed');
+    ok(name.hasClass('fakeClass'),
+            'beforeValidate : the item to be validated is given in argument ');
+    equal(afterValidate, 0, 'afterValidate is not executed if field is wrong');
+    name.val("validename");
+    form.checkform("validate",name);
+    ok(!name.hasClass(defaultItems.name.CSSClass),
+                                       'CSS class is removed when field is OK');    
+    equal(beforeValidate, 2, 'beforeValidate is still executed');                               
+    equal(afterValidate, 0, 'afterValidate is executed if the field is ok');
+    ok(name.hasClass('fakeClass2'),
+            'afterValidate : the item to be validated is given in argument ');
+    removeContext(context);
+});
 /*************************************************************/
 /******       Tests of the method destroy              *******/
 /*************************************************************/
