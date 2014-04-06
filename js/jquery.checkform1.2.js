@@ -22,7 +22,7 @@ function jqchf_getDefaultItems(){
     return {
         'mail': {
             'selector': '[name=email]',
-            'pattern': "^[a-z0-9._-]+@([a-z0-9]+[._-]?[a-z0-9]+)+\.[a-z]{2,4}$",
+            'pattern': "^[a-z0-9][a-z0-9._-]*@([a-z0-9]+[._-]?[a-z0-9]+)+\.[a-z]{2,4}$",
             'autoTrim':true
         },
         'name': {
@@ -47,12 +47,12 @@ function jqchf_getDefaultItems(){
         },
         'birthday': {
             'selector': '[name=birthday]',
-            'pattern': '^[0-9]{2}/[0-9]{2}/[0-9]{4}$',
+            'pattern': '^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$',
             'autoTrim':true
         },
         'phonenumber': {
             'selector': '[name=phonenumber]',
-            'pattern': '^0[1-8]([-. ]?[0-9]{2}){4}$',
+            'pattern': '^0[1-9]([-. ]?[0-9]{2}){4}$',
             'autoTrim':true,
         },
         'website': {

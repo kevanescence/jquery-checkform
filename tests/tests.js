@@ -309,8 +309,70 @@ test("destroy", function() {
 /******     Tests default regular expressions          *******/
 /*************************************************************/
 module("Pattern checks");
+/**
+ * 
+ * @param {Array} values a list of values to test
+ * @param {type} pattern the regex pattern to match
+ * @param {type} validity true if values have to match the pattern
+ *                        false otherwise
+ * @returns {undefined}
+ */
+function testRegex(values, pattern, validity){
+    var reg = new RegExp(pattern);
+    for(var v in values){       
+        if(validity){
+            ok(reg.test(values[v]), '\'' + values[v] + '\' is a valid value');
+        }
+        else {
+            ok(!reg.test(values[v]), '\'' + values[v] + '\' is not a valid value');
+        }
+    }
+}
 test("email", function() {
-    ok(1 == "1", "Passed!");
+    var pattern = jqchf_getDefaultItems().mail.pattern;
+    testRegex(['kevin', 'mail@', '-mail@mail.fr', 
+               'mail@mail@.fr', 'mail@mail.', 'mail@mail',
+               'mail.fisrtname@dom.verylongend', ''], pattern, false);
+    testRegex(['firstname.name@mail.com','mail@dom-subdom.com'], pattern, true);
+});
+test("name", function() {
+    var pattern = jqchf_getDefaultItems().name.pattern;
+    testRegex(['kevin65', 'a', '_firstname', 
+               'jean--philippe', 'jean-', ''], pattern, false);
+    testRegex(['jean-philippe','O\'Callagan','Le',
+               'Kevin','Mc Callen'], pattern, true);
+});
+test("firstname", function() {
+    var pattern = jqchf_getDefaultItems().firstname.pattern;
+    testRegex(['kevin65', 'a', '_firstname', 
+               'jean--philippe', 'jean-', ''], pattern, false);
+    testRegex(['jean-philippe','Le', 'Kevin'], pattern, true);
+});
+test("pseudo", function() {
+    var pattern = jqchf_getDefaultItems().pseudo.pattern;
+    testRegex(['_kevin65', 'a', ''], pattern, false);
+    testRegex(['kevin65','Le','two parts', 'K_evin'], pattern, true);
+});
+test("password", function() {
+    var pattern = jqchf_getDefaultItems().password.pattern;
+    testRegex(['ab', ''], pattern, false);
+    testRegex(['kevin65','The_42-number','two parts','letters'], pattern, true);
+});
+test("birthday", function() {
+    var pattern = jqchf_getDefaultItems().birthday.pattern;
+    testRegex(['21/08/199', '21/08//1992', '21/08','//2108'], pattern, false);
+    testRegex(['21/08/1992','01/12/2014'], pattern, true);
+});
+test("phonenumber", function() {
+    var pattern = jqchf_getDefaultItems().phonenumber.pattern;
+    testRegex(['letters', '01', '0134560909091355'], pattern, false);
+    testRegex(['0142424242','01 42 42 42 42', '01-42-42-42-42',
+              ['06.42.42.42.42']], pattern, true);
+});
+test("website", function() {
+    var pattern = jqchf_getDefaultItems().website.pattern;
+    testRegex(['www.my', 'www.myweb.atoolongdomain', 'www.unk/site.com'], pattern, false);
+    testRegex(['www.mywebsite.com','www.my-website.org'], pattern, true);
 });
 /*************************************************************/
 /******     Tests that user errors are thrown          *******/
