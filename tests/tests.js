@@ -77,6 +77,7 @@ test("Create a new item and overwritting an other", function(){
 /********** Context 4 : autoCheck=false ...  *******/
 test("Verify non initialization on default items when autoCheck=false", function(){ 
     console.log('context4');
+    var defaultItems = jqchf_getDefaultItems();
     var context = 3;
     bindContext(context);
     var options = jqchf_getDefaultOptions();
@@ -94,7 +95,7 @@ test("Verify non initialization on default items when autoCheck=false", function
     
     var data = input.data("jqchf-reg");    
     equal(data,options.items.newField.pattern,
-                            "jqchf-pattern : Initialization for a custom item");
+                            "jqchf-reg : Initialization for a custom item");
                         
     data = input.data("jqchf-trim");
     equal(data,true,"jqchf-trim : Initialization for a custom item");
@@ -102,7 +103,7 @@ test("Verify non initialization on default items when autoCheck=false", function
     input = form.find(defaultItems.password.selector);    
     data = input.data("jqchf-reg");
     console.log(data);
-    notEqual(data,options.items.password.pattern,
+    notEqual(data,defaultItems.password.pattern,
                                    "jqchf-reg: A default item is not overwritten");
     removeContext(context);
 });
@@ -112,7 +113,7 @@ test("Verify if linking is kept", function(){
     var form = bindContext(context);
     form.checkform().addClass("fakeClass");
     ok(form.hasClass("fakeClass"), "Initialization keeps jQuery linking");
-    removeContext(context);
+//    removeContext(context);
 });
 /*************************************************************/
 /******       Tests of the method check                *******/

@@ -137,36 +137,39 @@ function jqchf_getTemplateNewItem(){
             //User did not overwritte item
             if(args.items === undefined) {args.items = {};}
             //Check is based on the default selectors ?
-            var items;
-            if(args.autoCheck){
+            var items;            
+            if(args.autoCheck === true){                
                 $.extend(args.items,defItems);                
             }
-            items = args.items;  
-            console.log(items);
+            items = args.items;
+            var filter = 'input[type="text"],input[type="password"],textarea';
+            var target = form.find(filter); 
+            /*For items, define default options */
             for(var i in items){
-                console.log(i);
+                //If this is a custom item, define default values
                 if(defaultItems[i] === undefined){
-                    items[i] = $.extend(items[i],jqchf_getTemplateNewItem());
+                    $.extend(items[i],jqchf_getTemplateNewItem());
                 }
-                //args.items[i] = $.extend(args.items[i],defItems[i]);
-            }                      
+                //Initialize data 
+                target.filter(items[i].selector)
+                      .data('jqchf-reg', items[i].pattern)
+                      .data('jqchf-trim', items[i].autoTrim); 
+            }                       
             delete args.items;            
             form.data("jqchf-form-opt",args);
-            var filter = 'input[type="text"],input[type="password"],textarea';
-            var target = form.find(filter);           
-            for(var i in items){                              
-                target.filter(items[i].selector)
-                    .data('jqchf-reg', items[i].pattern)
-                    .data('jqchf-trim', items[i].autoTrim);            
-            }
-
-                      
+            //In all case the form submit event is built
+            form.on("submit", function(){
+                $(this).checkform("validate");
+                var res = form.data("jqchf-ok");
+                console.log(this);
+                return res === true;
+            });
+            
         },       
         check:function(item){
             console.warn("destroy : TO BE Done");
         },
-        validate:function(item){
-            
+        validate:function(item){            
         }, 
         uiAction:function(item){
             console.warn("destroy : TO BE Done");
