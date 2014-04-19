@@ -198,6 +198,7 @@ function jqchf_getTemplateNewItem(){
                 var wrongItems = fields.filter(function() {                     
                      return $(this).data("jqchf-ok") === false;
                 });
+                //At least one field is wrong ?
                 if(wrongItems.size() === 0){
                     form.data('jqchf-form-ok', true);
                 }
@@ -206,8 +207,9 @@ function jqchf_getTemplateNewItem(){
                 }                
             }
             else {
+                var form =$(this);
                 //Verifies all fields that have to be checked
-                var fields = $(this).find('.jqchf-flag');                
+                var fields = form.find('.jqchf-flag');                
                 fields.each(function(){                    
                    form.checkform("check",$(this));
                 });
@@ -216,8 +218,76 @@ function jqchf_getTemplateNewItem(){
         validate:function(item){          
             console.warn("validate : TO BE Done");
         }, 
-        uiAction:function(item){
-            
+        uiAction:function($item){
+            var form = $(this);            
+            if($item){
+                $item = $($item);
+                var uiType = form.data("jqchf-form-opt").type;
+                var formIsWrong = form.data("jqchf-form-ok") === false;
+                var fieldIsWrong = $item.data("jqchf-ok") === false;                
+                var cssClass = form.data("jqchf-form-opt").CSSClass;
+                var closeLink = "";
+                switch(uiType){
+                    case 'flash':
+                        closeLink = '<a href="#" title="Close flash">X</a>';
+                        form.on( "click", "a", function() {                            
+                            $(this).parentsUntil('form')
+                                   .filter('span.' + cssClass).remove();
+                        });
+                    //break; NO BREAK, continue on case text
+                    case 'text':                        
+                        var fieldName = $item.attr("name");
+                        var fieldLabel = $item.prev('label');
+                        var lblCSSClass = "lbl-err-" + fieldName;
+                        var lblSelector = "label." + lblCSSClass;                        
+                        var msgBloc = form.find("span." + cssClass);
+                        if(fieldIsWrong && msgBloc.size() === 0){
+                            form.append('<span class="'+cssClass + '"></span>');
+                            //closeLink contain "" on case text, html for flash
+                            msgBloc = $("span." + cssClass).prepend(closeLink);                            
+                        }
+                        if(fieldIsWrong){
+                            if(msgBloc.find(lblSelector).size()===0){                                
+                                var lblLink = "";
+                                if($item.attr("id") !== undefined)
+                                    lblLink = 'for="' + $item.attr("id") + '"';
+                                msgBloc.append('<label ' + lblLink 
+                                                + ' class="' + lblCSSClass + '">'
+                                                + fieldLabel.text() 
+                                                + ', </label>');                                        
+                            }
+                        }
+                        else {                            
+                            msgBloc.children(lblSelector).remove();                            
+                            if(!formIsWrong){                                
+                                form.find("span." + cssClass).remove();
+                            }
+                        }                        
+                        break;                    
+                    case 'label':{  
+                        //$item contains now the previous label
+                        $item = $item.prev('label');
+                        //break; NO BREAK, continue on case input
+                    }
+                    case 'input': {
+                        if(fieldIsWrong)
+                           $item.addClass(cssClass);
+                        else
+                           $item.removeClass(cssClass);
+                        break;   
+                    }
+                    default:
+                        //thwon unknown ui type. See documentation
+                }
+            }
+            else {               
+                var form =$(this);
+                //Verifies all fields that have to be checked
+                var fields = form.find('.jqchf-flag');                 
+                fields.each(function(){                    
+                   form.checkform("uiAction",$(this));
+                });
+            }
         },
         destroy:function(){
             console.warn("destroy : TO BE Done");

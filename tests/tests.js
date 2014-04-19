@@ -64,17 +64,14 @@ test("Create a new item and overwritting an other", function(){
     form.checkform(options);
     var input = form.find(options.items.newField.selector);
     //TODO check jqchf-form-sel
-    var data = input.data("jqchf-reg");   
-    console.log(data);
+    var data = input.data("jqchf-reg");       
     equal(data,options.items.newField.pattern,
                             "jqchf-pattern : Initialization for a custom item");
-    data = input.data("jqchf-role");    
-    console.log(data);
+    data = input.data("jqchf-role");        
     equal(data,'newField',
                             "jqchf-role : Initialization for a custom item");
                         
-    data = input.data("jqchf-trim");
-    console.log(data);
+    data = input.data("jqchf-trim");    
     equal(data,true,"jqchf-trim : Initialization for a custom item");
     
     input = form.find(defaultItems.password.selector);
@@ -213,21 +210,25 @@ test("style = text", function(){
     var defaultOptions = jqchf_getDefaultOptions();
     var context = 2;
     bindContext(context);
-    var form = $('form#context' + context);
+    var form = $('form#context' + context);    
     form.checkform();
+    
     form.find(defaultItems.name.selector).val("wr0ng");
-    form.checkform("check");
+    
+    form.checkform("check");    
     form.checkform("uiAction");
     
-    var nbElem = form.find(defaultOptions.CSSClass).size();
+    var nbElem = form.find("." + defaultOptions.CSSClass).size();    
     equal(nbElem, 1, 'Adding an html element in the form when item is wrong');
     
-    var text = form.find(defaultOptions.CSSClass).text();
+    var text = form.find("." + defaultOptions.CSSClass).text();    
     notEqual(text.indexOf("name"), -1,'The error message contains the field\'s label');
     
     form.find(defaultItems.name.selector).val("goodname");
+    form.find(defaultItems.mail.selector).val("goodmail@domain.com");
     form.checkform("check");
     form.checkform("uiAction");
+    nbElem = form.find("." + defaultOptions.CSSClass).size(); 
     equal(nbElem, 0, 'Removing the html element when the form is ok');
     
     removeContext(context);
@@ -238,7 +239,7 @@ test("style = label", function(){
     var defaultOptions = jqchf_getDefaultOptions();
     var context = 1;
     var form = bindContext(context);
-    form.checkform({style:'label'});
+    form.checkform({type:'label'});
     var name = form.find(defaultItems.name.selector).eq(0).val("b4d Value");   
     form.checkform("check",name);
     form.checkform("uiAction",name);
@@ -257,7 +258,7 @@ test("style = input", function(){
     var defaultOptions = jqchf_getDefaultOptions();
     var context = 1;
     var form = bindContext(context);
-    form.checkform({style:'input'});
+    form.checkform({type:'input'});
     var name = form.find(defaultItems.name.selector).eq(0).val("b4d Value");    
     form.checkform("check",name);
     form.checkform("uiAction",name);
@@ -276,26 +277,28 @@ test("style = flash", function(){
     var defaultOptions = jqchf_getDefaultOptions();
     var context = 2;
     var form = bindContext(context);    
-    form.checkform({style:'flash'});
+    form.checkform({type:'flash'});
     form.find(defaultItems.name.selector).val("wr0ng");
     form.checkform("check").checkform("uiAction");    
     
-    var nbElem = form.find(defaultOptions.CSSClass).size();
+    var nbElem = form.find("." + defaultOptions.CSSClass).size();
     equal(nbElem, 1, 'Adding an html element in the form when item is wrong');
-    var link = form.find(defaultOptions.CSSClass).find('a');    
+    var link = form.find("." + defaultOptions.CSSClass).find('a');    
     notEqual(link.size(),0, 'Flash element contain a link to remove it');
 
-    var text = form.find(defaultOptions.CSSClass).text();
+    var text = form.find("." + defaultOptions.CSSClass).text();
     notEqual(text.indexOf("name"), -1,'The error message contains the field\'s label');
     
     link.click();    
-    nbElem = form.find(defaultOptions.CSSClass).size();
-    equal(nbElem, 0, 'A click on the link remove the flash');
+    nbElem = form.find("." + defaultOptions.CSSClass).size();
+    equal(nbElem, 0, 'A click on the link removes the flash');
     
     form.checkform("check").checkform("uiAction");
     form.find(defaultItems.name.selector).val("goodname");
+    form.find(defaultItems.mail.selector).val("goodmail@domain.com");
     form.checkform("check");
     form.checkform("uiAction");
+    nbElem = form.find("." + defaultOptions.CSSClass).size();
     equal(nbElem, 0, 'Removing the html element when the form is ok');
     
     removeContext(context);
@@ -388,11 +391,11 @@ test("destroy", function() {
     bindContext(context);
     
     var form = $('form#context' + context).checkform();
-    var size = form.find('[data-jqchf*=reg]').size();    
+    var size = form.find('.jqchf-flag').size();    
     notEqual(size,0, 'Initialization done');
     
     form.checkform("destroy");
-    var size = form.find('[data-jqchf*=reg]').size();
+    var size = form.find('.jqchf-flag').size();
     equal(size,0, 'Destruction done');
     
     removeContext(context);
