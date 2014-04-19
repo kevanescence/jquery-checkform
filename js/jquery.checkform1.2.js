@@ -128,15 +128,37 @@ function jqchf_getTemplateNewItem(){
          * @returns {undefined}         
          * @see destroy
          */
-        init: function(options) {
+        init: function(options) {            
             var eventMap =  []; 
-            eventMap["lostfocus"] = "lostfocus";
+            eventMap["lostfocus"] = "focusout";
             eventMap["change"] = "keyup";
             var form = $(this);
             var defItems = jqchf_getDefaultItems();
             var defOpt = jqchf_getDefaultOptions();
             var args = {};
-            $.extend(args,defOpt,options);              
+            $.extend(args,defOpt,options);  
+            ////// User errors /////////
+            if($.inArray(args.event, availableOptions.event) === -1){
+                $.error("Jquery checkform : value " + args.items 
+                        + " not allowed for event");
+            }
+            if($.inArray(args.type, availableOptions.type) === -1){
+                $.error("Jquery checkform : value " + args.items 
+                        + " not allowed for type");
+            }
+            if($.inArray(args.autoCheck, availableOptions.autoCheck) === -1){
+                $.error("Jquery checkform : value " + args.items 
+                        + " not allowed for autoCheck");
+            }
+            if(typeof args.afterValidate !== 'function'){
+                $.error("Jquery checkform : value " + args.items 
+                        + " not allowed for afterValidate");
+            }
+            if(typeof args.beforeValidate !== 'function'){
+                $.error("Jquery checkform : value " + args.items 
+                        + " not allowed for beforeValidate");
+            }
+            ////// End of user errors ////
             //User did not overwritte item
             if(args.items === undefined) {}
             //Check is based on the default selectors ?
@@ -147,7 +169,7 @@ function jqchf_getTemplateNewItem(){
             }                        
             else {
                 items = args.items;
-            }            
+            }
             var filter = 'input[type="text"],input[type="password"],textarea';
             var target = form.find(filter); 
             /*For items, define default options */
@@ -306,7 +328,20 @@ function jqchf_getTemplateNewItem(){
             }
         },
         destroy:function(){
-            console.warn("destroy : TO BE Done");
+            var form = $(this);
+            //Remove all data initialized and destroy events
+            form.find(".jqchf-flag").each(function(){
+               $(this).removeData("jqchf-reg")
+                      .removeData("jqchf-trim")
+                      .removeData("jqchf-role");
+              var event = form.data("jqchf-form-opt").event;
+              if( event === 'change' || event === 'lostfocus')
+                  $(this).off(event);
+              
+            }).removeData("jqchf-form-opt")
+              .removeData("jqchf-form-ok")
+              .removeClass("jqchf-flag"); 
+            form.off("submit");
         }
     };
     var defaultItems = jqchf_getDefaultItems();    
@@ -314,9 +349,11 @@ function jqchf_getTemplateNewItem(){
     /*************************************************************/
     /*****************    Plug in core  **************************/
     /*************************************************************/
-    jQuery.fn.checkform = function(args, item) {
+    jQuery.fn.checkform = function(args, item) {                
         //All matched element ... 
-        this.each(function() {
+        this.each(function() {            
+            if(this.tagName.toLowerCase() !== 'form')
+                $.error('Jquery checkform : tag ' + this.tagName + ' not allowed');
             //Is it a method call ?
             if (methods[args]) {
                 return methods[args].apply(this,item);

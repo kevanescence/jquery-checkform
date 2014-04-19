@@ -86,7 +86,7 @@ test("Verify non initialization on default items when autoCheck=false", function
     var context = 3;
     bindContext(context);
     var options = jqchf_getDefaultOptions();
-    options.autoCheck = 'false';    
+    options.autoCheck = false;    
     var form = $("form#context" + context);
     options.items = {
         'newField':{
@@ -389,10 +389,11 @@ test("Argument - Method is called on a specific item",function(){
 /*************************************************************/
 module("Method - destroy ");
 test("destroy", function() {
-    var context = 1;
-    bindContext(context);
-    
-    var form = $('form#context' + context).checkform();
+    var context = 2;
+    var form = bindContext(context);
+    var defOptions = jqchf_getDefaultOptions();
+    var defItems = jqchf_getDefaultItems();
+    form.checkform({type:"input",event:"lostfocus"});
     var size = form.find('.jqchf-flag').size();    
     notEqual(size,0, 'Initialization done');
     
@@ -400,6 +401,10 @@ test("destroy", function() {
     var size = form.find('.jqchf-flag').size();
     equal(size,0, 'Destruction done');
     
+    var name = form.find(defItems.name.selector);
+    name.val("B4dNam3");
+    name.focusout();//Simulate a lost focus event
+    ok(!name.hasClass(defOptions.CSSClass),'Events built on the fields are removed');
     removeContext(context);
 });
 /*************************************************************/
@@ -484,28 +489,24 @@ test("Exception thrown", function() {
     }, /tag (.*)not allowed/i,
             "Exception thrown when plugin is used on a tag which is not 'FORM'");
     throws(function() {
-        $("form#test").checkform({fakeOption: 'fakeValue'});
-    }, /option (.*)unknown/i,
-            "Exception thrown when option specified does not exist");
-    throws(function() {
         $("form#test").checkform({event: 'fakeValue'});
-    }, /value (.*)not allowed/i,
+    }, /value (.*)not allowed for event/i,
             "event : Exception thrown when option exist but value does not exist");
     throws(function() {
         $("form#test").checkform({type: 'fakeValue'});
-    }, /value (.*)not allowed/i,
+    }, /value (.*)not allowed for type/i,
             "type : Exception thrown when option exist but value does not exist");
     throws(function() {
         $("form#test").checkform({autoCheck: 'fakeValue'});
-    }, /value (.*)not allowed/i,
+    }, /value (.*)not allowed for autoCheck/i,
             "autoCheck : Exception thrown when option exist but value does not exist");
     throws(function() {
         $("form#test").checkform({afterValidate: 'fakeValue'});
-    }, /value (.*)not allowed/i,
+    }, /value (.*)not allowed for afterValidate/i,
             "afterValidate : Exception thrown when a function was expected");
     throws(function() {
-        $("form#test").checkform({afterValidate: 'fakeValue'});
-    }, /value (.*)not allowed/i,
+        $("form#test").checkform({beforeValidate: 'fakeValue'});
+    }, /value (.*)not allowed for beforeValidate/i,
             "beforeValidate : Exception thrown when a function was expected");
 });
 
