@@ -306,37 +306,39 @@ test("style = flash", function(){
 /************* Context 5 : HTML how to verify it ? ************/
 
 /*************************************************************/
-/******       Tests of the method destroy              *******/
+/******       Tests of the method validate             *******/
 /*************************************************************/
 module("Method - validate");
 /************* Context 1 : called on the form   ************/
 test("No argument - Method is called on the form", function(){
     var defaultItems = jqchf_getDefaultItems();
     var defaultOptions = jqchf_getDefaultOptions();
-    var context = 3;
+    var context = 2;
     var before = 0; var after = 0;
     var form = bindContext(context);
     form.checkform({
         event:'submit',
         style:'text',
-        beforValidate:function(){before++;},
+        beforeValidate:function(){before++;},
         afterValidate:function(){after++;}
     });
     //Validate with wrong values
     form.checkform("validate");
     var mail = form.find(defaultItems.mail.selector);
+    var name = form.find(defaultItems.name.selector);
     mail.val("@bad!email@dress");
     equal(before, 1, 'beforeValidate is executed');
     equal(after,0, 'afterValidate is not executed if form is wrong');    
-    var messageBloc = form.find(defaultOptions.CSSClass);
+    var messageBloc = form.find("." + defaultOptions.CSSClass);
     equal(messageBloc.size(), 1, "A message is displayed when form is wrong");
     
     //Validate with good value
     mail.val("a.good@email.com");
+    name.val("myname");
     form.checkform("validate");
     equal(before, 2, 'beforeValidate is still executed');
     equal(after,1,'afterValidate is executed');    
-    messageBloc = form.find(defaultOptions.CSSClass);
+    messageBloc = form.find("." + defaultOptions.CSSClass);
     equal(messageBloc.size(), 0, "The message bloc is removed when form is ok");
     removeContext(context);
 });
@@ -349,7 +351,7 @@ test("Argument - Method is called on a specific item",function(){
     var beforeValidate = 0; var afterValidate = 0;
     var name = form.find(defaultItems.name.selector);
     form.checkform({
-        style:'input',
+        type:'input',
         event:'lostfocus',
         beforeValidate:function($item){
             beforeValidate++;
@@ -377,7 +379,7 @@ test("Argument - Method is called on a specific item",function(){
     ok(!name.hasClass(defaultItems.name.CSSClass),
                                        'CSS class is removed when field is OK');    
     equal(beforeValidate, 2, 'beforeValidate is still executed');                               
-    equal(afterValidate, 0, 'afterValidate is executed if the field is ok');
+    equal(afterValidate, 1, 'afterValidate is executed if the field is ok');
     ok(name.hasClass('fakeClass2'),
             'afterValidate : the item to be validated is given in argument ');
     removeContext(context);

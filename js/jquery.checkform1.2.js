@@ -27,7 +27,7 @@ THE SOFTWARE.
 /*************************************************************/
 var checkform_message =[];
 checkform_message['fr'] = 'Les champs suivants sont incorrects : ';
-checkform_message['en'] = 'The follow fields are invalid : ' ;
+checkform_message['en'] = 'The following fields are invalid : ' ;
 checkform_message['sp'] = 'Los siguientes campos son incorrectas : ' ;
 checkform_message['ge'] = 'Die folgenden Felder sind nicht korrekt : ';
 /*************************************************************/
@@ -42,8 +42,8 @@ function jqchf_getDefaultOptions() {
         CSSClass: 'checkform-wrong',
         target: null, //? really needed
         ajaxCheck: null,
-        afterValidate: null,
-        beforeValidate: null
+        afterValidate: function(){return true;},
+        beforeValidate: function(){return true;}
     };
 }
 
@@ -114,8 +114,8 @@ function jqchf_getTemplateNewItem(){
         CSSClass: null,
         target: null, //? really needed
         ajaxCheck: null,
-        afterValidate: null,
-        beforeValidate: null
+        afterValidate: function(){return true;},
+        beforeValidate: function(){return true;}
     };
 
     /*************************************************************/
@@ -215,8 +215,24 @@ function jqchf_getTemplateNewItem(){
                 });
             }
         },
-        validate:function(item){          
-            console.warn("validate : TO BE Done");
+        validate:function($item){          
+            var form = $(this);
+            var beforeValidate = form.data("jqchf-form-opt").beforeValidate;    
+            if($item){
+                $item = $($item);
+                beforeValidate($item);
+                form.checkform("check",$item);
+                form.checkform("uiAction",$item);
+                if(form.data("jqchf-form-ok") === true)
+                    form.data("jqchf-form-opt").afterValidate($item);
+            }
+            else {                                            
+                beforeValidate();
+                form.checkform("check");
+                form.checkform("uiAction");
+                if(form.data("jqchf-form-ok") === true)
+                    form.data("jqchf-form-opt").afterValidate();
+            }
         }, 
         uiAction:function($item){
             var form = $(this);            
