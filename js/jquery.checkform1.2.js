@@ -129,23 +129,31 @@ function jqchf_getTemplateNewItem(){
          * @see destroy
          */
         init: function(options) {
+            var eventMap =  []; 
+            eventMap["lostfocus"] = "lostfocus";
+            eventMap["change"] = "keyup";
             var form = $(this);
             var defItems = jqchf_getDefaultItems();
             var defOpt = jqchf_getDefaultOptions();
             var args = {};
-            $.extend(args,defOpt,options);            
+            $.extend(args,defOpt,options);              
             //User did not overwritte item
-            if(args.items === undefined) {args.items = {};}
+            if(args.items === undefined) {}
             //Check is based on the default selectors ?
             var items;            
-            if(args.autoCheck === true){                
-                $.extend(args.items,defItems);                
-            }
-            items = args.items;
+            if(args.autoCheck === true){                    
+                $.extend(true,defItems,args.items);                
+                items = defItems;
+            }                        
+            else {
+                items = args.items;
+            }            
             var filter = 'input[type="text"],input[type="password"],textarea';
             var target = form.find(filter); 
             /*For items, define default options */
-            for(var i in items){
+            filter = "";
+            for(var i in items){//console.log(i);
+                filter += items[i].selector + ",";
                 //If this is a custom item, define default values
                 if(defaultItems[i] === undefined){
                     $.extend(items[i],jqchf_getTemplateNewItem());
@@ -153,26 +161,63 @@ function jqchf_getTemplateNewItem(){
                 //Initialize data 
                 target.filter(items[i].selector)
                       .data('jqchf-reg', items[i].pattern)
-                      .data('jqchf-trim', items[i].autoTrim); 
-            }                       
+                      .data('jqchf-role', i)
+                      .data('jqchf-trim', items[i].autoTrim)
+                      .addClass('jqchf-flag'); //Allows to retrieve items easily
+            }
+            filter = filter.substr(0, filter.length - 1);            
+            if(eventMap[args.event]){                
+                form.find(filter).on(eventMap[args.event], function(e){
+                    form.checkform("validate", $(this));                    
+                });
+            }
             delete args.items;            
             form.data("jqchf-form-opt",args);
             //In all case the form submit event is built
             form.on("submit", function(){
-                $(this).checkform("validate");
-                var res = form.data("jqchf-ok");
-                console.log(this);
-                return res === true;
+                //beforeValidate()
+                $(this).checkform("validate");                
+                var res = form.data("jqchf-ok");                
+                return res === true /*&& afterValidate() */;
             });
             
         },       
-        check:function(item){
-            console.warn("destroy : TO BE Done");
+        check:function($item){               
+            if($item) {
+                var form = $(this);
+                var input = $($item);                
+                var rule = input.data("jqchf-reg");
+                var reg = new RegExp(rule);                                
+                if(input.data("jqchf-trim") === true){
+                    input.data("jqchf-ok",reg.test(input.val().trim()));
+                }
+                else {
+                    input.data("jqchf-ok",reg.test(input.val()));
+                }
+                var fields = form.find('.jqchf-flag');
+                var wrongItems = fields.filter(function() {                     
+                     return $(this).data("jqchf-ok") === false;
+                });
+                if(wrongItems.size() === 0){
+                    form.data('jqchf-form-ok', true);
+                }
+                else {
+                    form.data('jqchf-form-ok', false);
+                }                
+            }
+            else {
+                //Verifies all fields that have to be checked
+                var fields = $(this).find('.jqchf-flag');                
+                fields.each(function(){                    
+                   form.checkform("check",$(this));
+                });
+            }
         },
-        validate:function(item){            
+        validate:function(item){          
+            console.warn("validate : TO BE Done");
         }, 
         uiAction:function(item){
-            console.warn("destroy : TO BE Done");
+            
         },
         destroy:function(){
             console.warn("destroy : TO BE Done");
@@ -183,13 +228,13 @@ function jqchf_getTemplateNewItem(){
     /*************************************************************/
     /*****************    Plug in core  **************************/
     /*************************************************************/
-    jQuery.fn.checkform = function(args) {
+    jQuery.fn.checkform = function(args, item) {
         //All matched element ... 
         this.each(function() {
             //Is it a method call ?
             if (methods[args]) {
-                return methods[args].apply(this,
-                        Array.prototype.slice.call(args, 1));
+                return methods[args].apply(this,item);
+                       // Array.prototype.slice.call(arguments, 1));
             } else if (typeof args === 'object' || !args) {                
                 // Default call to "init"                   
                 return methods.init.apply(this,[args]);

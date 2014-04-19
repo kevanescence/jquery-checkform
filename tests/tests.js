@@ -17,9 +17,12 @@ test("No option", function() {
     
     propEqual(form.data("jqchf-form-opt"), defaultOptions, 
                                 "Defaut values set when no option is provided");
+    //TODO : check jqchf-form-sel                             
                                 
     var data = input.data("jqchf-reg");
     equal(data, defaultItems.name.pattern,"Default pattern is initialized");
+    data = input.data("jqchf-role");
+    equal(data, 'name',"Default role is initialized");
     
     data = input.data("jqchf-trim");
     equal(data, defaultItems.name.autoTrim,"Default trim is initialized");
@@ -38,7 +41,7 @@ test("Default values are overwritten", function(){
     options.type = 'flash';   
     form.checkform(options);    
     propEqual(form.data("jqchf-form-opt"),options,
-                                "Default values ares overwritten");
+                                "Default values ares overwritten");    
     removeContext(context);
 });
 /********** Context 3 : create a new item and overwritting an other *******/
@@ -60,12 +63,18 @@ test("Create a new item and overwritting an other", function(){
     };
     form.checkform(options);
     var input = form.find(options.items.newField.selector);
-    
-    var data = input.data("jqchf-reg");    
+    //TODO check jqchf-form-sel
+    var data = input.data("jqchf-reg");   
+    console.log(data);
     equal(data,options.items.newField.pattern,
                             "jqchf-pattern : Initialization for a custom item");
+    data = input.data("jqchf-role");    
+    console.log(data);
+    equal(data,'newField',
+                            "jqchf-role : Initialization for a custom item");
                         
     data = input.data("jqchf-trim");
+    console.log(data);
     equal(data,true,"jqchf-trim : Initialization for a custom item");
     
     input = form.find(defaultItems.password.selector);
@@ -75,8 +84,7 @@ test("Create a new item and overwritting an other", function(){
     removeContext(context);
 });
 /********** Context 4 : autoCheck=false ...  *******/
-test("Verify non initialization on default items when autoCheck=false", function(){ 
-    console.log('context4');
+test("Verify non initialization on default items when autoCheck=false", function(){     
     var defaultItems = jqchf_getDefaultItems();
     var context = 3;
     bindContext(context);
@@ -88,8 +96,7 @@ test("Verify non initialization on default items when autoCheck=false", function
             selector:'[name="new"]',
             pattern:'.+'           
         }
-    };
-    console.log(options);
+    };    
     form.checkform(options);
     var input = form.find(options.items.newField.selector);
     
@@ -101,8 +108,7 @@ test("Verify non initialization on default items when autoCheck=false", function
     equal(data,true,"jqchf-trim : Initialization for a custom item");
     
     input = form.find(defaultItems.password.selector);    
-    data = input.data("jqchf-reg");
-    console.log(data);
+    data = input.data("jqchf-reg");    
     notEqual(data,defaultItems.password.pattern,
                                    "jqchf-reg: A default item is not overwritten");
     removeContext(context);
@@ -113,7 +119,7 @@ test("Verify if linking is kept", function(){
     var form = bindContext(context);
     form.checkform().addClass("fakeClass");
     ok(form.hasClass("fakeClass"), "Initialization keeps jQuery linking");
-//    removeContext(context);
+    removeContext(context);
 });
 /*************************************************************/
 /******       Tests of the method check                *******/
@@ -126,34 +132,36 @@ test("No paramater : check all the form",function(){
     bindContext(context);
     var form = $("form#context" + context);
     form.checkform({
-        comment :{
-            selector:'[name="new"]',
-            pattern:'.+'
+        items : {
+            comment :{
+                  selector:'[name="new"]',
+                  pattern:'.+'
+            }
         }
     });
     var mail = form.find(defaultItems.mail.selector).eq(0);
     mail.val("firstname.name@domain.com");
-    var name = form.find(defaultItems.name.selctor).eq(0);
+    var name = form.find(defaultItems.name.selector).eq(0);
     name.val("O'Callagan");
     var comment = form.find('[name="new"]').eq(0);
     comment.val("");
     var pws = form.find(defaultItems.password.selector).eq(0);
     pws.val("_");
     
-    //Part 1 : All fields are except 
+    //Part 1 : All fields are expected
     form.checkform("check");    
-    equal(jQuery.data(name,"jqchf-ok"),true, 'name value is valid');    
-    equal(jQuery.data(comment,"jqchf-ok"),false, 'comment value is wrong');
-    equal(jQuery.data(pws,"jqchf-ok"),false, 'pwd value is wrong');
-    equal(jQuery.data(form,"jqchf-ok"),false, 'Global result is wrong');
+    equal(name.data("jqchf-ok"),true, 'name value is valid');    
+    equal(comment.data("jqchf-ok"),false, 'comment value is wrong');
+    equal(pws.data("jqchf-ok"),false, 'pwd value is wrong');
+    equal(form.data("jqchf-form-ok"),false, 'Global result is wrong');
     
     //Part 2 : We change the comment and the password values to respect the form rules
     comment.val("a simple comment");
     pws.val("af4K3Pw3");    
     form.checkform("check");
-    equal(jQuery.data(comment,"jqchf-ok"),true, 
+    equal(name.data("jqchf-ok"),true, 
                                     'After changings, its status is ok');
-    equal(jQuery.data(form,"jqchf-ok"),true, 'After changings, global result is ok');
+    equal(form.data("jqchf-form-ok"),true, 'After changings, global result is ok');
     removeContext(context);
 });
 /************* Context 2 : call on a specific item  *************/
@@ -173,13 +181,24 @@ test("Parameter : check the given item", function(){
     var item = form.find(defaultItems.mail.selector).eq(0);
     item.val(val);
     form.checkform("check",item);
-    var data = jQuery.data(item,"jqchf-ok");
+    var data = item.data("jqchf-ok");
     equal(data,false,'Check sets jqchf-ok to false when email(=\'' + val +'\') is wrong');
-    
+    data = item.parent().data("jqchf-form-ok");
+    equal(data,false,'Check sets jqchf-form-ok to false if at least one '+
+                    'field is wrong');
     var val = '  nom.prenom@mail.fr';
     item.val(val);
     form.checkform("check",item);
+    data = item.data("jqchf-ok");
     equal(data,true,'Autotrim : Check sets jsqch-ok to true when email(=\'' + val +'\') is ok');
+    data = item.parent().data("jqchf-form-ok");
+    equal(data, true, 'Check sets jqchf-form-ok to true if all fields are good');
+    item = form.find(defaultItems.name.selector).eq(0);
+    val = ' dupond ';
+    item.val(val);
+    form.checkform("check",item);
+    data = item.data("jqchf-ok");
+    equal(data, false, 'Check sets jqchf-ok considering autoTrim to false ');
     removeContext(context);
     
 });
