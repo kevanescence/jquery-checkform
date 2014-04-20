@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>Checkform-Demo</title>
+    <link href="../css/jquery.checkform-demo.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="../js/jquery1.7.1.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.checkform1.2.js"></script>
+        <script type="text/javascript">
+            $(function(){
+              $('#registry1').checkform();
+                $('#registry2').checkform({type:'label',afterValidate:function(){alert("toot");return false;}});
+                $('#registry3').checkform({type:'flash',event:'lostfocus',CSSClass:'flash-error'});
+                $('#registry4').checkform({type:'label',event:'change'});
+                $('#registry5').checkform({items:{"name":{"selector":"#r5_name"}},autoCheck:false});
+                $('#registry6').checkform({items:{"other":{"selector":"input.number",'pattern':'^[0-9]+$'}},type:'input'});
+                $('#registry7').checkform({type:'text',language:'fr'});
+                $('#registry8, #registry9').checkform({type:'label'});
+        });
+    </script>
+    </head>
+    <body>
+        <h1> Set of exemples of uses of checkform Jquery plug in <img src="../Images/jquery-logo.png" alt="Let's try Jquery"/></h1>
+        <form action="#" id="registry1" method="post">
+            <fieldset>
+            <h2>This form is initialized with default settings</h2>
+            <label for="email2">Mail adress</label>:<input name="email" id="email2" type="text" />
+            <label for="name">Name</label>:<input name="name" id="name" type="text" />
+            <label for="firstname">First name</label>:<input name="firstname" id="firstname" type="text" />
+            <label for="pseudo">Login</label>:<input  name="pseudo" id="pseudo" type="text" />
+            <label for="password">Password</label>:<input name="password" id="password" type="password" />
+            <input id="register1" name="r1" value="Register" type="submit"/>
+            </fieldset>
+        </form>
+        <form action="#" id="registry2" method="post">
+            <fieldset>
+            <h2> Using a label UI Effect and the afterValidate option</h2>
+            <label for="r2_email">Mail</label><input id="r2_email" name="email" type="text" />
+            <label for="r2_birthday">Birthday</label><input id="r2_birthday" name="birthday" type="text" />
+            <label for="r2_firstname">Firstname</label><input id="r2_firstname" name="firstname" type="text" />
+            <input id="register2" name="r2" value="Register" type="submit"/>
+            </fieldset>
+        </form>
+        <form action="#" id="registry3" method="post">
+            <fieldset>
+            <h2>Using lostfocus event, flash UI Action and a specified CSS class</h2>
+            <label for="r3_email">Mail adress</label><input id="r3_email" name="email" type="text" />
+            <label for="r3_name">Name</label><input id="r3_name" name="name" type="text" />
+            <label for="r3_firstname">Firstname</label><input id="r3_firstname" name="firstname" type="text" />
+            <label for="r3_website">Your website</label><input id="r3_website" name="website" type="text" />
+            <input id="register3" type="submit" value="Register" />
+            </fieldset>
+        </form>
+        <form action="#" id="registry4" method="post">
+            <fieldset>
+            <h2>This one has unknown fields which won't be evaluated. Change event used</h2>
+            <label for="r4_unknown1">Unknown</label><input id="r4_unknown1" name="unkwonw1" type="text" />
+            <label for="r4_name">Name</label><input id="r4_name" name="name" type="text" />
+            <label for="r4_firstname">Firstname</label><input id="r4_firstname" name="firstname" type="text" />
+            <label for="r4_unknown2">Unknown</label><input id="r4_unknown2" name="unkwown2" type="text" />
+            <input id="register4" type="submit" value="Register" />
+            </fieldset>
+        </form>
+        <form action="#" id="registry5" method="post">
+            <fieldset>
+            <h2>autoCheck=false, only name field will be checked</h2>
+            <label for="r5_name">Name</label><input id="r5_name" name="name" type="text" />
+            <label for="r5_firstname">Firstname</label><input id="r5_firstname" name="firstname" type="text" />
+            <label for="r5_website">Website</label><input id="r5_website" name="website" type="text" />
+            <input id="register5" type="submit" value="Register" />
+            </fieldset>
+        </form>
+        <form action="#" id="registry6" method="post">
+            <fieldset>
+            <h2>Using a class selector and a new kind of item. Input UI Action</h2>
+            <label for="r6_number1">An intenger</label><input id="r6_number1" class="number" name="n1" type="text" />
+            <label for="r6_number2">An other one</label><input class="number" id="r6_number2" name="n2" type="text" />
+            <label for="r6_name">Your name</label><input id="r6_name" name="name" type="text" />
+            <input id="register6" type="submit" value="Register" />
+            </fieldset>
+        </form>
+        <form action="#" id="registry7" method="post">
+            <fieldset>
+            <h2>An other language ...</h2>
+            <label for="r6_number1">Naissance</label><input id="r7_birthday" name="birthday" type="text" />
+            <label for="r7_name">Votre nom</label><input id="r7_name" name="name" type="text" />
+            <input id="register7" type="submit" value="Inscrire" />
+            </fieldset>
+        </form>
+        <form action="#" id="registry8" method="post">
+            <fieldset>
+            <h2> These two fieldsets...</h2>
+            <label for="r8_email">Mail</label><input id="r8_email" name="email" type="text" />
+            <label for="r8_birthday">Birthday</label><input id="r8_birthday" name="birthday" type="text" />
+            <label for="r8_firstname">Firstname</label><input id="r8_firstname" name="firstname" type="text" />
+            <input id="register8" type="submit" value="Register" />
+            </fieldset>
+        </form>
+        <form action="#" id="registry9" method="post">
+            <fieldset>
+            <h2> ... are initialized with the same JQuery line</h2>
+            <label for="r9_email">Mail</label><input id="r9_email" name="email" type="text" />
+            <label for="r9_birthday">Birthday</label><input id="r9_birthday" name="birthday" type="text" />
+            <label for="r9_firstname">Firstname</label><input id="r9_firstname" name="firstname" type="text" />
+            <input id="register9" type="submit" value="Register"  />
+            </fieldset>
+        </form>
+    </body>
+</html>
+

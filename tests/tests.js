@@ -433,9 +433,9 @@ function testRegex(values, pattern, validity){
 test("email", function() {
     var pattern = jqchf_getDefaultItems().mail.pattern;
     testRegex(['kevin', 'mail@', '-mail@mail.fr', 
-               'mail@mail@.fr', 'mail@mail.', 'mail@mail',
-               'mail.fisrtname@dom.verylongend', ''], pattern, false);
-    testRegex(['firstname.name@mail.com','mail@dom-subdom.com'], pattern, true);
+               'mail@mail@.fr', 'mail@mail.', 'mail@mail',''], pattern, false);
+    testRegex(['mail@mail.fr','firstname.name@mail.com','mail@dom-subdom.com']
+                , pattern, true);
 });
 test("name", function() {
     var pattern = jqchf_getDefaultItems().name.pattern;

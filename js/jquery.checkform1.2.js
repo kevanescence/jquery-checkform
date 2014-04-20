@@ -54,7 +54,7 @@ function jqchf_getDefaultItems(){
     return {
         'mail': {
             'selector': '[name=email]',
-            'pattern': "^[a-z0-9][a-z0-9._-]*@([a-z0-9]+[._-]?[a-z0-9]+)+\.[a-z]{2,4}$",
+            'pattern': "^[a-z0-9][a-z0-9\._-]*@([a-z0-9\._-]+[\._-]?[a-z0-9]+)+\.[a-z]{2,4}$",
             'autoTrim':true
         },
         'name': {
@@ -85,7 +85,7 @@ function jqchf_getDefaultItems(){
         'phonenumber': {
             'selector': '[name=phonenumber]',
             'pattern': '^0[1-9]([-. ]?[0-9]{2}){4}$',
-            'autoTrim':true,
+            'autoTrim':true
         },
         'website': {
             'selector': '[name=website]',
@@ -168,7 +168,7 @@ function jqchf_getTemplateNewItem(){
                 items = defItems;
             }                        
             else {
-                items = args.items;
+                items = args.items;                
             }
             var filter = 'input[type="text"],input[type="password"],textarea';
             var target = form.find(filter); 
@@ -178,7 +178,16 @@ function jqchf_getTemplateNewItem(){
                 filter += items[i].selector + ",";
                 //If this is a custom item, define default values
                 if(defaultItems[i] === undefined){
+                    if(items[i].selector === undefined ||
+                            items[i].pattern === undefined){
+                        $.error("Jquery checkform : you must precise pattern " +
+                            "and selector for item " + i);
+                    }
                     $.extend(items[i],jqchf_getTemplateNewItem());
+                }
+                //Allows to retrieve default configuration when autoCheck = false
+                else if (args.autoCheck === false){
+                    $.extend(items[i],defItems[i]);
                 }
                 //Initialize data 
                 target.filter(items[i].selector)
@@ -273,16 +282,17 @@ function jqchf_getTemplateNewItem(){
                                    .filter('span.' + cssClass).remove();
                         });
                     //break; NO BREAK, continue on case text
-                    case 'text':                        
+                    case 'text':                   
                         var fieldName = $item.attr("name");
                         var fieldLabel = $item.prev('label');
                         var lblCSSClass = "lbl-err-" + fieldName;
                         var lblSelector = "label." + lblCSSClass;                        
-                        var msgBloc = form.find("span." + cssClass);
+                        var msgBloc = form.find("span." + cssClass);                        
                         if(fieldIsWrong && msgBloc.size() === 0){
                             form.append('<span class="'+cssClass + '"></span>');
                             //closeLink contain "" on case text, html for flash
-                            msgBloc = $("span." + cssClass).prepend(closeLink);                            
+                            msgBloc = form.find("span." + cssClass)
+                                          .prepend(closeLink);                            
                         }
                         if(fieldIsWrong){
                             if(msgBloc.find(lblSelector).size()===0){                                
