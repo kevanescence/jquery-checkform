@@ -1,511 +1,623 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <title>Checkform-Documentation v1.1</title>
-    <link href="../CSS/jquery.checkform-doc.css" rel="stylesheet" type="text/css" />
-    <link href="../CSS/prism.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="../JS/jquery1.7.1.min.js"></script>
-        <script type="text/javascript" src="../JS/jquery.checkform1.1.min.js"></script>
-       
-        <script type="text/javascript">
-            $(function(){
-              $('#registry1').checkform();
-              $('#registry6').checkform({"items":{"other":{"selector":"input.number",'pattern':'^[0-9]+$'}},/*"options":{*/'type':'input'/*}*/});
-              $('#registry3').checkform({/*"options":{*/'type':'flash','event':'change','CSSClass':'flash-error'/*}*/});
-                $('.exemple code').hide();
-                $("a").click(function(event){
-                    event.preventDefault();
-                    var elem=$(this);
-                      var type=elem.attr("data-type");
-                    elem.parents('div').eq(0).find('code').hide().filter('code.' + 'language-' + type).slideToggle(500);
-                });
-        });
-    </script>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Jquery checkform plugin v1.2 - Documentation</title>
+
+        <!-- Bootstrap -->
+        <link href="../bootstrap/bootstrap.min.css" rel="stylesheet">
+        <link href="../bootstrap/basic.css" rel="stylesheet">
+        <!-- CSS and JS coloration -->
+        <link href="../css/prism.css" rel="stylesheet" type="text/css"/>
+
+        <link href="../css/jquery.checkform-doc.css" 
+              rel="stylesheet" type="text/css" />
     </head>
     <body>
-         <script type="text/javascript" src="../JS/prism.js"></script>
-        <h1> Documentation page of checkform Jquery plug-in<img src="../Images/jquery-logo.png" alt="Let's try Jquery"/></h1>
-        <h2> Features and bug fixes </h2>
-        <table>
-            <tr>
-                <th>Improvement</th><th>Release</th><th>Date</th>
-            </tr>
-            <tr>
-                <td>End of development</td>
-                <td>1.0</td>
-                <td>10/14/2012</td>                
-            </tr>
-            <tr>
-                <td>Add an "afterValidate" option</td>
-                <td>1.1</td>
-                <td>03/30/2014</td>                
-            </tr>
-        </table>
-        <h2>Why using checkform plug-in  ?</h2>
-        <p>This plug-in aims you at developping faster and making your form validation less tedious. It enables you to
-        make various user interfaces in javascript easily. Moreover it prevents server from being too busy by checking
-        forms. Indeed, by using this plug-in, server will check only one time data. </p>
-        <h2>How to use ? </h2>
-        <h3>How it works </h3>
-        <p>In order to avoid compatibilty issues, please use the <a href="http://jquery.com/download/">latest jQuery version</a>.<br/><br/>
-            The checkform plug-in uses name html attribute in each input tags. In this way if you respect conventional
-        names the initialization will be done automaticaly. For example an input called "name" will be check with
-        the corresponding regular expression. In this way you don't have to be an expert in RegEx to use the plug-in<br/><br/>
-        You will be able to chose different kind of UI action that have to be display when some fields are wrong.
-        There are 4 types of effect : label, input, flash or text (default setting). <br/><br/>Different event are also provided.
-        In this way data can be checked as soon as a letter is type or when input loses focus or more tradionaly when
-        the form is sent.<br/><br/>Arguments must be transmitted as a JSON expression<br/><span class="note">Important : all field must have a label even if it is not displayed. It enables the plug-in
-        to display an explicit message to indicate wrong fields.</span></p>
-        <h3>File dependencies</h3>
-        <p>
-        Please add the following lines in the header tag of your file
-        <code class="language-javascript">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" 
+                            data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Jquery checkform v1.2</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main jumbotron for a primary marketing message or call to action -->
+        <div class="jumbotron">
+            <div class="container">
+                <h1>Jquery checkform plugin !</h1>
+                <p>
+                    Tired of javascript form validation ? This Jquery plug-in provides 
+                    various HTML form validation styles (events, ui styles, ajax...).
+                    It includes also a set of default patterns for the most common 
+                    fields to be checked. 
+                </p>
+                <p><a href="jquery.checkform-demo.html" class="btn btn-primary btn-lg" 
+                      role="button">See examples</a>
+                </p>
+            </div>
+        </div>
+        <div class="container">
+            <!-- Getting started -->                        
+            <div class="row">
+                <div class="col-md-8">
+                    <h2>Getting started</h2>
+                    Add the following lines at the end of the HTML body <br/>
+                    <code class="language-javascript">
 &lt;script type="text/javascript" src="jquery.min.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="jquery.checkform.js"&gt;&lt;/script&gt;
-        </code>
-        </p>
-        <h3>Examples</h3>
-        <div class="exemple">
-            <h4>Default functionality</h4>
-            <div id="ex1">
-            <form action="#" id="registry1" method="post">
-                <fieldset>
-                    <label for="email">Adresse mail</label>:<input name="email" id="email" type="text" />
-                    <label for="name">Nom</label>:<input name="name" id="name" type="text" />
-                    <label for="firstname">Prénom</label>:<input name="firstname" id="firstname" type="text" />
-                    <label for="pseudo">Pseudo</label>:<input  name="pseudo" id="pseudo" type="text" />
-                    <label for="password">Mot de passe</label>:<input name="password" id="password" type="text" />
-                    <input id="register1" name="r1" value="Register" type="submit"/>
-                </fieldset>
-            </form>
-            <ul>
-                <li><a href="#" data-type="markup">View HTML</a></li>
-                <li><a href="#" data-type="css">View CSS</a></li>
-                <li><a href="#" data-type="javascript">View JavaScript</a></li>
-            </ul>           
-            <code class="language-markup">
-             &lt;form action="#" id="registry1" method="post"&gt;
-          &lt;fieldset&gt;
-               &lt;label for="email"&gt;Adresse mail&lt;/label&gt;:&lt;input name="email" id="email" type="text" /&gt;
-               &lt;label for="name"&gt;Nom&lt;/label&gt;:&lt;input name="name" id="name" type="text" /&gt;
-               &lt;label for="firstname"&gt;Prénom&lt;/label&gt;:&lt;input name="firstname" id="firstname" type="text" /&gt;
-               &lt;label for="pseudo"&gt;Pseudo&lt;/label&gt;:&lt;input  name="pseudo" id="pseudo" type="text" /&gt;
-               &lt;label for="password"&gt;Mot de passe&lt;/label&gt;:&lt;input name="password" id="password" type="text" /&gt;
-               &lt;input id="register1" name="r1" value="Register" type="submit"/&gt;
-          &lt;/fieldset&gt;
+                    </code>
+                    For the following HTML form : 
+                    <code class="language-markup">
+&lt;form action="#" id="registry1" method="post"&gt;
+    &lt;fieldset&gt;
+        &lt;label for="email"&gt;Mail address&lt;/label&gt;:
+        &lt;input name="email" id="email" type="text" /&gt;               
+        &lt;label for="password"&gt;Password&lt;/label&gt;:
+        &lt;input name="password" id="password" type="text" /&gt;
+        &lt;input id="register1" name="r1" value="Register" type="submit"/&gt;
+    &lt;/fieldset&gt;
 &lt;/form&gt;
-            </code>
-            <code class="language-css">
-form {
-	margin: 1em;
-	display: inline-block;
-	vertical-align: top;
-	width: 20em;
-	padding: 0.3em;
-
-	-webkit-box-shadow: 2px 2px 3px 0px #75A0FF;
-	box-shadow: 2px 2px 3px 0px #75A0FF;
-}
-
-form label {
-	display: inline-block;
-	width: 7em;
-}
-
-#registry1 {
-	width: 20em;
-}
-
-#registry1 span.checkform-wrong {
-	color: #000;
-	display: block;
-	border-color: red;
-	border-style: solid;
-	border-width: 1px;
-	margin-top: 0.2em;
-	background-image: url("../Images/erreur.png");
-	background-repeat: no-repeat;
-	background-position: 2%, 50%;
-	padding-left: 23px;
-}
-
-#registry1 span.checkform-wrong label {
-	width: auto;
-	color: red;
-}
-
-            </code>
-            <code class="language-javascript">
-                    $('#registry1').checkform();
-            </code>
+                    </code>
+                    Initialize the checkform plugin : 
+                    <code class="language-javascript">
+                        $('#registry1').checkform();
+                    </code>
+                    Your form will now be checked before being submitted.
+                    For more details about how default fields are checked see
+                    the default pattern section.
+                </div>
             </div>
-            <h4>You can add new pattern and change kind of UI effect</h4>
-            <div id="ex2">
-                <form action="#" id="registry6" method="post">
-                    <fieldset>
-                        <label for="r6_number1">An intenger</label><input id="r6_number1" class="number" name="n1" type="text" />
-                        <label for="r6_number2">An other one</label><input class="number" id="r6_number2" name="n2" type="text" />
-                        <label for="r6_name">Your name</label><input id="r6_name" name="name" type="text" />
-                        <input id="register6" type="submit" value="Register" />
-                    </fieldset>
-                </form>
-                <ul>
-                    <li><a href="#" data-type="markup">View HTML</a></li>
-                    <li><a href="#" data-type="css">View CSS</a></li>
-                    <li><a href="#" data-type="javascript">View JavaScript</a></li>
-                </ul>
-                <code class="language-markup">
-&lt;form action="#" id="registry6" method="post"&gt;
-         &lt;fieldset&gt;
-             &lt;label for="r6_number1"&gt;An intenger&lt;/label&gt;&lt;input id="r6_number1" class="number" name="n1" type="text" /&gt;
-             &lt;label for="r6_number2"&gt;An other one&lt;/label&gt;&lt;input class="number" id="r6_number2" name="n2" type="text" /&gt;
-             &lt;label for="r6_name"&gt;Your name&lt;/label&gt;&lt;input id="r6_name" name="name" type="text" /&gt;
-             &lt;input id="register6" type="submit" value="Register" /&gt;
-         &lt;/fieldset&gt;
-&lt;/form&gt;
-                </code>
-                <code class="language-css">
-#registry6 input.checkform-wrong {
-	border: 1px solid red;
-
-	-webkit-box-shadow: 0px 0px 5px #b01111;
-	box-shadow: 0px 0px 5px #b01111;
-}
-
-form {
-	margin: 1em;
-	display: inline-block;
-	vertical-align: top;
-	width: 20em;
-}
-
-form label {
-	display: inline-block;
-	width: 7em;
-}
-
-form {
-	padding: 0.3em;
-
-	-webkit-box-shadow: 2px 2px 3px 0px #75A0FF;
-	box-shadow: 2px 2px 3px 0px #75A0FF;
-}
-
-                </code>
-                <code class="language-javascript">
-                    $('#registry6').checkform({items:{"integer":{"selector":"input.number",
-                                               'pattern':'^[0-9]+$'
-                                             }
-                                   },
-                          type:'inputs'
-                           });
-                </code>
-            </div>
-            <h4>You can specify the event to use for check and change the CSS Class</h4>
-            <div id="ex3">
-                <form action="#" id="registry3" method="post">
-                    <fieldset>
-                        <div><label for="r3_email">Mail adress</label><input id="r3_email" name="email" type="text" /></div>
-                        <div><label for="r3_name">Name</label><input id="r3_name" name="name" type="text" /></div>
-                        <div><label for="r3_firstname">Firstname</label><input id="r3_firstname" name="firstname" type="text" /></div>
-                        <div><label for="r3_website">Your website</label><input id="r3_website" name="website" type="text" /></div>
-                        <input id="register3" type="submit" value="Register" />
-                    </fieldset>
-                </form>
-                <ul>
-                    <li><a href="#" data-type="markup">View HTML</a></li>
-                    <li><a href="#" data-type="css">View CSS</a></li>
-                    <li><a href="#" data-type="javascript">View JavaScript</a></li>
-                </ul>
-                <code class="language-markup">
-&lt;form action="#" id="registry3" method="post"&gt;
-     &lt;fieldset&gt;
-          &lt;label for="r3_email"&gt;Mail adress&lt;/label&gt;&lt;input id="r3_email" name="email" type="text" /&gt;
-          &lt;label for="r3_name"&gt;Name&lt;/label&gt;&lt;input id="r3_name" name="name" type="text" /&gt;
-          &lt;label for="r3_firstname"&gt;Firstname&lt;/label&gt;&lt;input id="r3_firstname" name="firstname" type="text" /&gt;
-          &lt;label for="r3_website"&gt;Your website&lt;/label&gt;&lt;input id="r3_website" name="website" type="text" /&gt;
-          &lt;input id="register3" type="submit" value="Register" /&gt;
-     &lt;/fieldset&gt;
-&lt;/form&gt;
-                </code>
-                <code class="language-css">
- div.flash-error {
-	background-color: #fe1611; /*Pour les navigateurs ne reconnaissant pas le dégradé*/
-background-image: -webkit-linear-gradient(#ff8686,#fe1611);
-
-	background-image: -moz-linear-gradient(#ff8686,#fe1611);
-	background-image: -o-linear-gradient(#ff8686,#fe1611);
-	background-image: -ms-linear-gradient(#ff8686,#fe1611);
-	background-image: linear-gradient(#ff8686,#fe1611);
-	-image position: absolute;
-	top: 0px;
-	left: 0px;
-	z-index: 210892;
-	width: 95%;
-	padding-left: 5%;
-	padding-top: 20px;
-	height: 55px;
-	border-radius: 0px 0px 5px 5px;
-	color: #FFF;
-}
-
-div.flash-error a.flash-close {
-	position: fixed;
-	color: #fff;
-	text-decoration: none;
-	border-radius: 2px;
-	text-align: center;
-	float: right;
-	margin-right: 10px;
-	font-size: 1.4em;
-	-moz-opacity: 0.8;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
-	filter: alpha(opacity=80);
-	opacity: 0.8;
-	padding: 2px;
-}
-
-
-div.flash-error a.flash-close:hover {
-	background-color: #d2d2d2;
-}
-
-                </code>
-                <code class="language-javascript">
-                                  $('#registry3').checkform({type:'flash',
-                           event:'change',
-                           CSSClass:'flash-error'
-                            });
-
-                </code>
-            </div>
-            <h4> For more examples, please see the <a href="jquery.checkform-demo.html" >demo page</a></h4>
+            <div class="row">
+                <h2>Customing checking</h2>
+                <h3>Default configuration</h3>
+                <div class="col-md-3">
+                    <div class="example-wrapper">
+<form id="default-conf" action="#">
+    <fieldset>
+        <legend>Sign in</legend>
+        <div class="input-group">
+            <label for="email">Email</label>:
+            <input id="email" name="email"
+                   type="text" class="form-control" 
+                   placeholder="User email">
         </div>
-        <h3>List of options available</h3>
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>List of possibility</th>
-                <th>Default value</th>
-                <th>Effect</th>
-                <th>Plug-in version</th>
-            </tr>
-            <tr>
-                <td class="option-name">autoCheck</td>
-                <td class="center">True, False</td>
-                <td class="center">True</td>
-                <td>Set if the plug-in has to automaticaly check the name html attribute
-                of input tags. If set to false, inputs must be specified in items option</td>
-                <td class="center">
-                    1.0+
-                </td>
-            </tr>
-            <tr>
-                <td class="option-name">CSSClass</td>
-                <td class="center">A correct class name</td>
-                <td class="center">checkform-wrong</td>
-                <td>Specifies the class which will be apply to the interface effect (parameter "type"). </td>
-                <td class="center">1.0+</td>
-            </tr>
-            <tr>
-                <td class="option-name">afterValidate</td>
-                <td class="center">function</td>
-                <td class="center">null</td>
-                <td>A function to be executed when form is validated (submit event)</td>
-                <td class="center">1.1+</td>
-            </tr>
-            <tr>
-                <td class="option-name">event</td>
-                <td class="center">change, lostfocus, submit</td>
-                <td class="center">submit</td>
-                <td>Determine when fields have to be checked. <br/>If set to submit, fields will only be verified
-                before sending data. If at least one incorrect field, data won't be sent. <br/>If set to lostfocus,
-                input text will be checked as soon as input loses focus. <br/>If set to change, the field will be
-                checked at every time it changes. <span class="note">Note that submit checking is called in every case. Please
-                notice too that change event requires more performance than submit one.</span>
-                </td>
-                <td class="center">
-                    1.0+
-                </td>
-            </tr>
-            <tr>
-                <td class="option-name">language</td>
-                <td class="center">en, fr, ge, sp</td>
-                <td class="center">en</td>
-                <td>Specifie the language of the message displayed. "en" for englsih, "fr" for french, "ge" for german
-                    and "sp" for spanish. <span class="note">A new language can be added at the top of javascript file. Add a
-                    key to the checkform_message array</span></td>
-                <td class="center">
-                    1.0+
-                </td>
-            </tr>
-            <tr>
-                <td class="option-name">type</td>
-                <td class="center">flash, inputs, label, text</td>
-                <td class="center">text</td>
-                <td>Determine which kind of user inteferface you want to use. The effect will have  CSSClass parameters for
-                css class. In this way css lines allow more personalization.<br/>Value "flash" add a div in the html file. The
-                div will have &lt;CSSClass&gt; class.<br/> Value "text" will add a span tag at the end
-                of the form and indicate the label of wrong fields. <br/> Value "input" will simply add &lt;CSSClass&gt; class to
-                the wrong inputs. <br/>Value "label" will add &lt;CSSClass&gt; to the wrong field's previous label.
-                </td>
-                <td class="center">
-                    1.0+
-                </td>
-            </tr>
-            <tr>
-                <td class="option-name">items</td>
-                <td></td>
-                <td></td>
-                <td>
-                    You can specify here items to be checked if default selectors don't satisfy you.<br/> You can also use this
-                    part in order to specify new pattern for a group of input. Indeed you might want to define a rule
-                    which is not in the default settings. For example you can add a MAC adress pattern or a credit card one.<br/>
-                    Item is defined by two property : a selector and a pattern. Each one of these settings has a <a href="#defaultPatt">default value</a>
-                    so you can overwrite only one property or both. Specify this options like this :
-                    <pre>"items":
-                                {
-                                "MACAdress":{ //Define a new kind of check
-                                              "selector":"input.macAdress",
-                                              "pattern':'^([0-9A-F]{2}:){6}$'
-                                              },
-                                "birthday":{ //Specify a new rule for bithday
-                                            "pattern":"^[0-9]{2}-[0-9]{2}-[0-9]{4}$"
-                                            }
+        <div class="input-group">
+            <label for="name">Name</label>:
+            <input id="name" name="name" type="text"
+                   class="form-control" placeholder="Name"/>
+        </div>                       
+        <input class="btn btn-success" type="submit"
+                    value="Sign in"/>                            
+    </fieldset>                        
+</form>
+                 </div>
+                </div>
+                <div class="col-md-9">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a href="#js" data-toggle="tab">JS</a></li>
+                      <li><a href="#html" data-toggle="tab">HTML</a></li>
+                      <li><a href="#css" data-toggle="tab">CSS</a></li>                      
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                      <div class="tab-pane active" id="js">
+                         <code class="language-javascript">
+                            $('#default-conf').checkform();
+                         </code>
+                      </div>
+                      <div class="tab-pane" id="html">
+                         <code class="language-markup"></code>
+                      </div>
+                      <div class="tab-pane" id="css">
+                          <code class="language-css">
+                              /* No CSS required excepted bootstrap */
+                          </code>
+                      </div>                      
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="row">                                
+                <h3>Customming event and specific CSS</h3>
+                <div class="col-md-3">
+                    <div class="example-wrapper">
+<form id="example2" action="#">
+    <fieldset>
+        <legend>Sign in</legend>
+        <div class="input-group">
+            <label for="pseudo">Pseudo</label>:
+            <input id="pseudo" name="pseudo"
+                   type="text" class="form-control" 
+                   placeholder="Pseudo">
+        </div>
+        <div class="input-group">
+            <label for="birthday">Birthday</label>:
+            <input id="birthday" name="birthday" type="text"
+                   class="form-control" placeholder="MM / DD / YYYY"/>
+        </div>                       
+        <input class="btn btn-success" type="submit"
+                    value="Sign in"/>                            
+    </fieldset>                        
+</form>
+                 </div>
+                </div>
+                <div class="col-md-9">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a href="#example2-js" data-toggle="tab">JS</a></li>
+                      <li><a href="#example2-html" data-toggle="tab">HTML</a></li>
+                      <li><a href="#example2-css" data-toggle="tab">CSS</a></li>                      
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                      <div class="tab-pane active" id="example2-js">
+                         <code class="language-javascript">
+                            $('#default-conf').checkform({
+                                CSSClass:"alert alert-danger",
+                                event:"lostfocus"                
+                            });
+                         </code>
+                      </div>
+                      <div class="tab-pane" id="example2-html">
+                         <code class="language-markup"></code>
+                      </div>
+                      <div class="tab-pane" id="example2-css">
+                          <code class="language-css">
+                              /* No CSS required excepted bootstrap */
+                          </code>
+                      </div>                      
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="row">                                
+                <h3>Custom your items</h3>
+                <div class="col-md-3">
+                    <div class="example-wrapper">
+<form id="example3" action="#">
+    <fieldset>
+        <legend>Sign in</legend>
+        <div class="input-group">
+            <label for="firstname">Firstname</label>:
+            <input id="firstname" name="firstname"
+                   type="text" class="form-control" 
+                   placeholder="Firstname">
+        </div>
+        <div class="input-group">
+            <label for="birth-city">City of birth</label>:
+            <input id="birth-city" name="birth-city" type="text"
+                   class="form-control" placeholder="City of birth"/>
+        </div>                       
+        <input class="btn btn-success" type="submit"
+                    value="Sign in"/>                            
+    </fieldset>                        
+</form>
+                 </div>
+                </div>
+                <div class="col-md-9">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a href="#example3-js" data-toggle="tab">JS</a></li>
+                      <li><a href="#example3-html" data-toggle="tab">HTML</a></li>
+                      <li><a href="#example3-css" data-toggle="tab">CSS</a></li>                      
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                      <div class="tab-pane active" id="example3-js">
+                         <code class="language-javascript">
+                            $('#form#example3').checkform({
+                                autoCheck:false,//Disable checking on firstname
+                                items:{
+                                    placeofbirth: {
+                                        selector:'[name=birth-city]',
+                                        pattern:'[a-zA-Z]+'
+                                    }
                                 }
-                    </pre>
-                </td>
-                <td class="center">
-                    1.0+
-                </td>
-            </tr>
-        </table>
-<!--        <h3>List of methods available</h3>
-        <table>
-            <tr>
-                <th>Object</th>
-                <th>Name</th>
-                <th>Options</th>
-                <th>Return value/effect</th>
-                <th>Plug-in version</th>
-            </tr>
-            <tr>
-                <td>form</td>
-                <td class="method-name">numberOfWrong</td>
-                <td></td>
-                <td>return the number of wrong fields in the form</td>
-                <td class="center">1.0+</td>
-            </tr>
-            <tr>
-                <td>form</td>
-                <td class="method-name">checkItem</td>
-                <td class="center">item</td>
-                <td>check the item given in parameter (Jquery object, not a css selector).
-                The given item must have been initialize by the line : <span class="code-js">$(form).checkform();</span>
-                </td>
-                <td class="center">1.0+</td>
-            </tr>
-            <tr>
-                <td>form</td>
-                <td class="method-name">validate</td>
-                <td class="center">style</td>
-                <td>validate all of inputs of the form with the corresponding rule. Apply &lt;style&gt; interface effect
-                The given item must have been initialized by the line : <span class="code-js">$(form).checkform();</span>
-                </td>
-                <td class="center">1.0+</td>
-            </tr>
-            <tr>
-                <td>input</td>
-                <td class="method-name">check</td>
-                <td></td>
-                <td>check the input field by testing the regular expression. Don't apply UI effect</td>
-                <td class="center">1.0+</td>
-            </tr>
-            <tr>
-                <td>input</td>
-                <td class="method-name">isOK</td>
-                <td></td>
-                <td>return true if the last test done on the input was OK. Don't check the field</td>
-                <td class="center">1.0+</td>
-            </tr>
-            <tr>
-                <td>input</td>
-                <td class="method-name">UIAction</td>
-                <td></td>
-                <td>Apply the UI action whithout checking the item</td>
-                <td class="center">1.0+</td>
-            </tr>
-            <tr>
-                <td>input</td>
-                <td class="method-name">validate</td>
-                <td></td>
-                <td>Check the field  and apply UI effect on it.</td>
-                <td class="center">1.0+</td>
-            </tr>
-        </table>-->
-        <h3>List of default patterns and selectors</h3>
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Selector</th>
-                <th>Pattern</th>
-                <th>Example of wrong data</th>
-            </tr>
-            <tr>
-                <td>birthday</td>
-                <td>[name=birthday]</td>
-                <td>^[0-9]{2}/[0-9]{2}/[0-9]{4}$</td>
-                <td>26-01-1992<br/>26-ja-1000<br/>1/1/2000</td>
-            </tr>
-            <tr>
-                <td>firstname</td>
-                <td>[name=firstname]</td>
-                <td>^([a-zA-Zéèëïêàâùçîû][ \'-]?)+[a-za-zA-Zéèëïêàâùçîû]+$</td>
-                <td>Jean--Yves<br/>jean--<br/>arthur'<br/>leo34</td>
-            </tr>
-            <tr>
-                <td>mail</td>
-                <td>[name=email]</td>
-                <td>^[a-z0-9._-]+@([a-z0-9]+[._-]?[a-z0-9]+)+\.[a-z]{2,4}$</td>
-                <td>toto@<br/>titi@gmail<br/>tutu@gmail.trololo<br/>tutu@gmail--france.fr</td>
-            </tr>
-            <tr>
-                <td>name</td>
-                <td>[name=name]</td>
-                <td>^([a-zA-Zéèëïêàâùçîû][ \'-]?)+[a-zA-Zéèëïêàâùçîû]+$</td>
-                <td>'ME <br/>long--name<br/>Bond007</td>
-            </tr>
-            <tr>
-                <td>password</td>
-                <td>[name=password]</td>
-                <td>^.{4,25}$</td>
-                <td>gfd</td>
-            </tr>
-            <tr>
-                <td>phonenumber</td>
-                <td>[name=phonenumber]</td>
-                <td>^0[1-8]([-. ]?[0-9]{2}){4}$</td>
-                <td>1054024550<br/>01--50204030</td>
-            </tr>
-            <tr>
-                <td>pseudo</td>
-                <td>[name=pseudo]</td>
-                <td>^[a-zA-Zéèëïêàâùçîû0-9][a-zA-Zéèëïêàâùçîû0-9_ -]{0,13}[a-zA-Zéèëïêàâùçîû0-9]$</td>
-                <td>_myName<br/>a<br/>justAVeryLongPseudo</td>
-            </tr>
-            <tr>
-                <td>website</td>
-                <td>[name=website]</td>
-                <td>^[a-zA-Z0-9\-\.]+\.(com|org|net|mil|edu|COM|ORG|NET|MIL|EDU)$</td>
-                <td></td>
-            </tr>
-        </table>
-        <p class="w3c">
-            Jquery checkform plug-in v1.0. Plug-in developped by Kevin REMY.<br/>
-            <a href="http://validator.w3.org/check?uri=referer"><img
-                    src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a>
-        </p>
-    </body>
+                            });
+                         </code>
+                      </div>
+                      <div class="tab-pane" id="example3-html">
+                         <code class="language-markup"></code>
+                      </div>
+                      <div class="tab-pane" id="example3-css">
+                          <code class="language-css">
+                              /* No CSS required excepted bootstrap */
+                          </code>
+                      </div>                      
+                    </div>
+
+
+                </div>
+            </div>
+            
+            <!-- Configurations options -->
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Configuration options</h2>
+                    <div class="panel panel-default">
+                        <!-- Default panel contents -->
+                        <div class="panel-heading">List of options</div>
+                        <!-- Table -->
+                        <table class="table">                                                            
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Possibilities</th>
+                                <th>Default value</th>
+                                <th>Effect</th>
+                                <th>Plug-in version</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>autoCheck</td>
+                                <td>true, false</td>
+                                <td>true</td>
+                                <td>
+                                    Determines if the plug-in has to automaticaly 
+                                    check the default items. If set to false, 
+                                    inputs must be specified in the items option
+                                <td>
+                                    1.0+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CSSClass</td>
+                                <td>A correct class name</td>
+                                <td>checkform-wrong</td>
+                                <td>
+                                    Specifies the class which will be apply to 
+                                    the interface effect (parameter "type"). 
+                                    Several classes can be added by passing a 
+                                    string containing space-separated classes.
+                                </td>
+                                <td>1.0+</td>
+                            </tr>
+                            <tr>
+                                <td>afterValidate</td>
+                                <td>function</td>
+                                <td>null</td>
+                                <td>
+                                    A function to be executed after the form has 
+                                    been validated. If at least one field is 
+                                    wrong, this function won't be executed.
+                                </td>
+                                <td>1.1+</td>
+                            </tr>
+                            <tr>
+                                <td>event</td>
+                                <td>change, lostfocus, submit</td>
+                                <td>submit</td>
+                                <td>
+                                    Determines when fields have to be checked. 
+                                    <ul>
+                                        <li>
+                                            change : a field is checked when its
+                                            value changes (a key is pressed).
+                                        </li>
+                                        <li>
+                                            lostfocus : a field is checked when
+                                            the focus leave it.
+                                        </li>
+                                        <li>
+                                            submit : all field are validated when
+                                            the form is submitted.
+                                        </li>
+                                    </ul>
+                                    <div class="alert alert-info">
+                                        <span class="important">
+                                            Note :
+                                        </span>
+                                        Submit checking is always called. If at
+                                        least one field is wrong, data won't be 
+                                        end. 
+                                    </div>
+                                    <div class="alert alert-warning">
+                                        <span class="important">Warning :</span>
+                                        Be careful using both event change and
+                                        ajax checking for performance reasons.
+                                    </div>      
+                                </td>
+                                <td>
+                                    1.0+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>language</td>
+                                <td>en, fr, ge, sp</td>
+                                <td>en</td>
+                                <td>
+                                    Specifies the language of the message displayed.
+                                    <ul>
+                                        <li>"en" for englsih</li>
+                                        <li>"fr" for french</li>
+                                        <li>"ge" for german</li>
+                                        <li>"sp" for spanish</li>
+                                    </ul>
+                                    <div class="alert alert-info">
+                                        <span class="important">Note :</span>
+                                        A new language can be added at the top 
+                                        of javascript file by adding a key to 
+                                        the checkform_message array
+                                    </div>
+                                </td>
+                                <td>
+                                    1.0+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>type</td>
+                                <td>
+                                    flash, input, label, text
+                                </td>
+                                <td>text</td>
+                                <td>
+                                    Determines which kind of user inteferface 
+                                    has to be applied when a field is wrong. The
+                                    CSSClass option is added to the UI element.
+                                    <ul>
+                                        <li>
+                                            text : A message is displayed at the
+                                            end of the form containing all wrong
+                                            item's label.
+                                        </li>
+                                        <li>
+                                            flash : Same as text but add a close
+                                            message button.
+                                        </li>
+                                        <li>
+                                            label : add the css class to the
+                                            previous label of the wrong item
+                                        </li>
+                                        <li>
+                                            input : add the css class to the
+                                            wrong item
+                                        </li>
+                                    </ul>                                    
+                                </td>
+                                <td>
+                                    1.0+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>items</td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    Allows to specify new kind of items or to
+                                    overwrite a default item. You can add a MAC 
+                                    adress pattern or a credit card one.<br/>
+                                    An item is defined by four properties :
+                                    <ul>
+                                        <li>selector : a CSS selector to 
+                                            determine which fields in the have 
+                                            to be checked</li>
+                                        <li>pattern : a regular expression to 
+                                            the field</li>
+                                        <li>autoTrim : if true, field will be
+                                            trimed before being checked.
+                                        </li>
+                                        <li>
+                                            ajaxCheck : TO BE DONE
+                                        </li>
+                                    </ul>
+                                   See the default values
+                                   <a href="#default-items">here</a><br/>
+                                   Example :
+                                    <pre>
+"items":{
+  "MACAdress":{ //Defines a new kind of check
+      "selector":"input.macAdress",
+      "pattern':'^([0-9A-F]{2}:){6}$'
+  },
+  "birthday":{ //Specifies a new rule for bithday items
+      "pattern":"^[0-9]{2}-[0-9]{2}-[0-9]{4}$"
+  }
+}
+                                    </pre>
+                                   <div class="alert alert-warning">
+                                       <span class="important">Warning :</span>
+                                       For a new item, selector and pattern are
+                                       require. autoTrim and ajaxCheck options
+                                       will be respectively set to true and false 
+                                       by default.
+                                   </div>
+                                </td>
+                                <td>
+                                    1.0+
+                                </td>
+                            </tr>
+                            </tbody>
+                         </table>
+                    </div>
+                </div>
+            </div>            
+
+            <!-- Default items -->
+            <div class="row">
+                <div class="col-md-8">
+                    <h2 id="default-items">Default checking rules</h2>
+                    <div class="panel panel-default">
+                        <!-- Default panel contents -->
+                        <div class="panel-heading">List of default pattern and selectors</div>
+                        <!-- Table -->
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Selector</th>
+                                    <th>Pattern</th>
+                                    <th>Example of wrong data</th>
+                                </tr>                      
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    <td>birthday</td>
+                                    <td>[name=birthday]</td>
+                                    <td>^[0-9]{2}/[0-9]{2}/[0-9]{4}$</td>
+                                    <td>26-01-1992<br/>26-ja-1000<br/>1/1/2000</td>
+                                </tr>
+                                <tr>
+                                    <td>firstname</td>
+                                    <td>[name=firstname]</td>
+                                    <td>^([a-zA-Zéèëïêàâùçîû][ \'-]?)+[a-za-zA-Zéèëïêàâùçîû]+$</td>
+                                    <td>Jean--Yves<br/>jean--<br/>arthur'<br/>leo34</td>
+                                </tr>
+                                <tr>
+                                    <td>mail</td>
+                                    <td>[name=email]</td>
+                                    <td>^[a-z0-9._-]+@([a-z0-9]+[._-]?[a-z0-9]+)+\.[a-z]{2,4}$</td>
+                                    <td>toto@<br/>titi@gmail<br/>tutu@gmail.trololo<br/>tutu@gmail--france.fr</td>
+                                </tr>
+                                <tr>
+                                    <td>name</td>
+                                    <td>[name=name]</td>
+                                    <td>^([a-zA-Zéèëïêàâùçîû][ \'-]?)+[a-zA-Zéèëïêàâùçîû]+$</td>
+                                    <td>'ME <br/>long--name<br/>Bond007</td>
+                                </tr>
+                                <tr>
+                                    <td>password</td>
+                                    <td>[name=password]</td>
+                                    <td>^.{4,25}$</td>
+                                    <td>gfd</td>
+                                </tr>
+                                <tr>
+                                    <td>phonenumber</td>
+                                    <td>[name=phonenumber]</td>
+                                    <td>^0[1-8]([-. ]?[0-9]{2}){4}$</td>
+                                    <td>1054024550<br/>01--50204030</td>
+                                </tr>
+                                <tr>
+                                    <td>pseudo</td>
+                                    <td>[name=pseudo]</td>
+                                    <td>^[a-zA-Zéèëïêàâùçîû0-9][a-zA-Zéèëïêàâùçîû0-9_ -]{0,13}[a-zA-Zéèëïêàâùçîû0-9]$</td>
+                                    <td>_myName<br/>a<br/>justAVeryLongPseudo</td>
+                                </tr>
+                                <tr>
+                                    <td>website</td>
+                                    <td>[name=website]</td>
+                                    <td>^[a-zA-Z0-9\-\.]+\.(com|org|net|mil|edu|COM|ORG|NET|MIL|EDU)$</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>                        
+            <!-- History -->
+            <div class="row">
+                <div class="col-md-8">
+                    <h2>History</h2>
+                    <div class="panel panel-default">
+                        <!-- Default panel contents -->
+                        <div class="panel-heading">List of improvements</div>
+                        <!-- Table -->
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Details
+                                    </th>
+                                    <th>
+                                        Version
+                                    </th>
+                                    <th>
+                                        Date
+                                    </th>
+                                </tr>                        
+                            </thead>
+                            <tr>
+                                <td>Plug-in coded from scratch (tdd method).
+                                    New features :
+                                    <ul>
+                                        <li>a function specified in parameter can be executed
+                                            before validating the form</li>
+                                        <li>trim items before checking</li>
+                                        <li>html5 uiAction type</li>
+                                        <li>ajax checking</li>                        
+                                    </ul>
+                                </td>
+                                <td>1.2</td>
+                                <td>04/21/2014</td>                
+                            </tr>
+                            <tr>
+                                <td>Add an "afterValidate" option</td>
+                                <td>1.1</td>
+                                <td>03/30/2014</td>    
+                            </tr>
+                            <tr>
+                            <tr>
+                                <td>End of development</td>
+                                <td>1.0</td>
+                                <td>10/14/2012</td>                
+                            </tr>
+                        </table>
+                    </div>
+                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, 
+                        tellus ac cursus commodo, tortor mauris condimentum nibh, ut 
+                        fermentum massa justo sit amet risus. Etiam porta sem malesuada 
+                        magna mollis euismod. Donec sed odio dui. </p>
+                    <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+                </div>
+            </div>
+            <hr>
+            <footer>
+                <p>Plugin developped by Kevin REMY. Plugin under the MIT licence.</p>
+            </footer>
+        </div>
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="../bootstrap/bootstrap.min.js"></script>
+        <!-- CSS and Javascript code coloration -->
+        <script type="text/javascript" src="../js/prism.js"></script>
+        <!-- Jquery checkform plugin -->
+        <script type="text/javascript" src="../js/jquery.checkform1.2.js"></script>
+        <!-- Initialize tabs code -->
+        <script type="text/javascript">            
+            $('ul.nav.nav-tabs a').click(function(e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+            $('.tab-pane .language-markup').each(function(){                
+                var form = $(this).parents(".col-md-9").siblings(".col-md-3")
+                                  .find('.example-wrapper');                
+                $(this).text(form.html());
+            });
+            $("form#default-conf").checkform();
+            $("form#example2").checkform({
+                CSSClass:"alert alert-danger",
+                event:"lostfocus"                
+            });
+            $('form#example3').checkform({
+                autoCheck:false,
+                items:{
+                    placeofbirth: {
+                        selector:'[name=birth-city]',
+                        pattern:'[a-zA-Z]+'
+                    }
+                }
+            });
+        </script>
+        
+        </body>
 </html>
 

@@ -276,41 +276,53 @@ function jqchf_getTemplateNewItem(){
                 var closeLink = "";
                 switch(uiType){
                     case 'flash':
+                        var cssClassFilter = cssClass.replace(" ", ".");
                         closeLink = '<a href="#" title="Close flash">X</a>';
-                        form.on( "click", "a", function() {                            
+                        form.on( "click", "a", function(e) {                            
                             $(this).parentsUntil('form')
-                                   .filter('span.' + cssClass).remove();
+                                   .filter('div.' + cssClassFilter).remove();
+                           e.preventDefault();
                         });
                     //break; NO BREAK, continue on case text
                     case 'text':                   
                         var fieldName = $item.attr("name");
                         var fieldLabel = $item.prev('label');
+                        console.log(fieldLabel);
+                        //Required if several classes are provided in CSSClass
+                        var cssClassFilter = cssClass.replace(" ", ".");
                         var lblCSSClass = "lbl-err-" + fieldName;
                         var lblSelector = "label." + lblCSSClass;                        
-                        var msgBloc = form.find("span." + cssClass);                        
+                        var msgBloc = form.find("div." + cssClassFilter);                        
                         if(fieldIsWrong && msgBloc.size() === 0){
-                            form.append('<span class="'+cssClass + '"></span>');
+                            var lang = form.data("jqchf-form-opt").language;
+                            form.append('<div class="'+cssClass + '">'
+                                        + checkform_message[lang] +  '</div>');
                             //closeLink contain "" on case text, html for flash
-                            msgBloc = form.find("span." + cssClass)
+                            msgBloc = form.find("div." + cssClassFilter)
                                           .prepend(closeLink);                            
                         }
                         if(fieldIsWrong){
                             if(msgBloc.find(lblSelector).size()===0){                                
                                 var lblLink = "";
-                                if($item.attr("id") !== undefined)
+                                if($item.attr("id") !== undefined) {
                                     lblLink = 'for="' + $item.attr("id") + '"';
+                                }
+                                var lastChild = msgBloc.children(":last-child");                                
+                                lastChild.text(lastChild.text().replace(".",","));
                                 msgBloc.append('<label ' + lblLink 
                                                 + ' class="' + lblCSSClass + '">'
                                                 + fieldLabel.text() 
-                                                + ', </label>');                                        
-                            }
+                                                + ',</label>');
+                            }                            
                         }
                         else {                            
                             msgBloc.children(lblSelector).remove();                            
                             if(!formIsWrong){                                
-                                form.find("span." + cssClass).remove();
+                                form.find("div." + cssClassFilter).remove();
                             }
-                        }                        
+                        }
+                        lastChild = msgBloc.children(":last-child");                            
+                        lastChild.text(lastChild.text().replace(",","."));
                         break;                    
                     case 'label':{  
                         //$item contains now the previous label
