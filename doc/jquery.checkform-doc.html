@@ -4,15 +4,17 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Jquery checkform plugin v1.2 - Documentation</title>
+        <title>Jquery checkform plugin - Documentation</title>
 
         <!-- Bootstrap -->
-        <link href="../bootstrap/bootstrap.min.css" rel="stylesheet">
-        <link href="../bootstrap/basic.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <!--<link href="../bootstrap/basic.css" rel="stylesheet">-->
+<!--         Optional theme -->
+        <link rel="stylesheet" href="../css/bootstrap-theme.min.css">
         <!-- CSS and JS coloration -->
-        <link href="../css/prism.css" rel="stylesheet" type="text/css"/>
+        <link href="css/prism.css" rel="stylesheet" type="text/css"/>
 
-        <link href="../css/jquery.checkform-doc.css" 
+        <link href="css/jquery.checkform-doc.css" 
               rel="stylesheet" type="text/css" />
     </head>
     <body>
@@ -26,7 +28,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Jquery checkform v1.2</a>
+                    <a class="navbar-brand" href="#">Jquery checkform</a>
                 </div>
             </div>
         </div>
@@ -77,8 +79,10 @@
                     the default pattern section.
                 </div>
             </div>
+            <h2>Customing checking</h2>
+            <!-- Default configuration -->
             <div class="row">
-                <h2>Customing checking</h2>
+                
                 <h3>Default configuration</h3>
                 <div class="col-md-3">
                     <div class="example-wrapper">
@@ -130,21 +134,24 @@
 
                 </div>
             </div>
+            <!-- Custom the event -->
             <div class="row">                                
-                <h3>Customming event and specific CSS</h3>
+                <h3>Custom the event and use a specific CSS</h3>
                 <div class="col-md-3">
                     <div class="example-wrapper">
 <form id="example2" action="#">
     <fieldset>
         <legend>Sign in</legend>
-        <div class="input-group">
-            <label for="pseudo">Pseudo</label>:
+        <div class="input-group">                        
+            <span class="input-group-addon glyphicon glyphicon-user"></span>
+            <label class="sr-only" for="pseudo">Pseudo</label><!--Required to display error-->
             <input id="pseudo" name="pseudo"
                    type="text" class="form-control" 
                    placeholder="Pseudo">
         </div>
-        <div class="input-group">
-            <label for="birthday">Birthday</label>:
+        <div class="input-group">            
+            <span class="input-group-addon glyphicon glyphicon-gift"></span>
+            <label class="sr-only" for="birthday">Birthday</label><!--Required to display error-->
             <input id="birthday" name="birthday" type="text"
                    class="form-control" placeholder="MM / DD / YYYY"/>
         </div>                       
@@ -163,7 +170,7 @@
                     </ul>
 
                     <!-- Tab panes -->
-                    <div class="tab-content">
+                    <div class="tab-content" data-exemple="2">
                       <div class="tab-pane active" id="example2-js">
                          <code class="language-javascript">
                             $('#default-conf').checkform({
@@ -181,10 +188,9 @@
                           </code>
                       </div>                      
                     </div>
-
-
                 </div>
             </div>
+            <!-- Custom your items -->
             <div class="row">                                
                 <h3>Custom your items</h3>
                 <div class="col-md-3">
@@ -218,7 +224,7 @@
                     </ul>
 
                     <!-- Tab panes -->
-                    <div class="tab-content">
+                    <div class="tab-content"  data-exemple="2">
                       <div class="tab-pane active" id="example3-js">
                          <code class="language-javascript">
                             $('#form#example3').checkform({
@@ -244,8 +250,59 @@
 
 
                 </div>
-            </div>
-            
+            </div>         
+            <!-- Ajax checking -->
+            <div class="row">                                
+                <h3>Ajax checking and REST</h3>
+                <div class="col-md-3">
+                    <div class="example-wrapper">
+<form id="example3" action="#">
+    <fieldset>
+        <legend>Sign in</legend>
+        <div class="input-group">
+            <label for="firstname">Firstname</label>:
+            <input id="firstname" name="firstname"
+                   type="text" class="form-control" 
+                   placeholder="Firstname">
+        </div>
+        <div class="input-group">
+            <label for="birth-city">City of birth</label>:
+            <input id="birth-city" name="birth-city" type="text"
+                   class="form-control" placeholder="City of birth"/>
+        </div>                       
+        <input class="btn btn-success" type="submit"
+                    value="Sign in"/>                            
+    </fieldset>                        
+</form>
+                 </div>
+                </div>
+                <div class="col-md-9">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a href="#example4-js" data-toggle="tab">JS</a></li>
+                      <li><a href="#example4-html" data-toggle="tab">HTML</a></li>
+                      <li><a href="#example4-css" data-toggle="tab">CSS</a></li>                      
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                      <div class="tab-pane active" id="example4-js">
+                         <code class="language-javascript">
+                         </code>
+                      </div>
+                      <div class="tab-pane" id="example4-html">
+                         <code class="language-markup"></code>
+                      </div>
+                      <div class="tab-pane" id="example4-css">
+                          <code class="language-css">
+                              /* No CSS required excepted bootstrap */
+                          </code>
+                      </div>                      
+                    </div>
+
+
+                </div>
+            </div> 
             <!-- Configurations options -->
             <div class="row">
                 <div class="col-md-12">
@@ -266,6 +323,46 @@
                             </thead>
                             <tbody>
                             <tr>
+                                <td>afterValidate</td>
+                                <td>function</td>
+                                <td>null</td>
+                                <td>
+                                    A function to be executed after the form has 
+                                    been validated. If at least one field is 
+                                    wrong, this function won't be executed. 
+                                    This function has to return true to let the 
+                                    browser performing the default submission. <br/>
+                                    In REST context application, form submission
+                                    can be placed here (afterValidate must return false)
+                                </td>
+                                <td>1.1+</td>
+                            </tr>
+                            <tr>
+                                <td>ajaxURL</td>
+                                <td>An URL as string</td>
+                                <td>null</td>
+                                <td>
+                                   If not null, items which have their ajaxCheck
+                                   property set to true, will be given as POST
+                                   parameters to this URL via an ajax query.
+                                   <br/>The server response must be a JSON like :
+                                   <pre>
+"status": "OK", //Global status of checking; FAILED for a wrong checking
+"items":
+  "pseudo":{ //key must be the name HTML attribute of the field
+      "message":"Pseudo is available",
+      "status":"OK"
+  },
+  "email":{
+      "message":"Your email does not exist",
+      "satus":"FAILED"
+  }
+}
+                                   </pre>
+                                </td>
+                                <td>1.2+</td>
+                            </tr>
+                            <tr>
                                 <td>autoCheck</td>
                                 <td>true, false</td>
                                 <td>true</td>
@@ -278,6 +375,17 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td>beforeValidate</td>
+                                <td>function</td>
+                                <td>null</td>
+                                <td>
+                                    A function to be executed before the form is
+                                    validated. The checking method will always be
+                                    executed.
+                                </td>
+                                <td>1.2+</td>
+                            </tr>
+                            <tr>
                                 <td>CSSClass</td>
                                 <td>A correct class name</td>
                                 <td>checkform-wrong</td>
@@ -288,17 +396,6 @@
                                     string containing space-separated classes.
                                 </td>
                                 <td>1.0+</td>
-                            </tr>
-                            <tr>
-                                <td>afterValidate</td>
-                                <td>function</td>
-                                <td>null</td>
-                                <td>
-                                    A function to be executed after the form has 
-                                    been validated. If at least one field is 
-                                    wrong, this function won't be executed.
-                                </td>
-                                <td>1.1+</td>
                             </tr>
                             <tr>
                                 <td>event</td>
@@ -333,6 +430,59 @@
                                         Be careful using both event change and
                                         ajax checking for performance reasons.
                                     </div>      
+                                </td>
+                                <td>
+                                    1.0+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>items</td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    Allows to specify new kind of items or to
+                                    overwrite a default item. You can add a MAC 
+                                    adress pattern or a credit card one.<br/>
+                                    An item is defined by four properties :
+                                    <ul>
+                                        <li>selector : a CSS selector to 
+                                            determine which fields in the have 
+                                            to be checked</li>
+                                        <li>pattern : a regular expression to 
+                                            the field</li>
+                                        <li>autoTrim : if true, field will be
+                                            trimed before being checked. 
+                                            <span class="important">Only for
+                                            version 1.2+.</span>
+                                        </li>
+                                        <li>
+                                            ajaxCheck : if true, field will also
+                                            be checked by an ajaxURL.
+                                            <span class="important">Only for
+                                            version 1.2+.</span>
+                                        </li>
+                                    </ul>
+                                   See the default values
+                                   <a href="#default-items">here</a><br/>
+                                   Example :
+                                    <pre>
+"items":{
+  "MACAdress":{ //Defines a new kind of check
+      "selector":"input.macAdress",
+      "pattern':'^([0-9A-F]{2}:){6}$'
+  },
+  "birthday":{ //Specifies a new rule for bithday items
+      "pattern":"^[0-9]{2}-[0-9]{2}-[0-9]{4}$"
+  }
+}
+                                    </pre>
+                                   <div class="alert alert-warning">
+                                       <span class="important">Warning :</span>
+                                       For a new item, selector and pattern are
+                                       require. autoTrim and ajaxCheck options
+                                       will be respectively set to true and false 
+                                       by default.
+                                   </div>
                                 </td>
                                 <td>
                                     1.0+
@@ -395,60 +545,13 @@
                                     1.0+
                                 </td>
                             </tr>
-                            <tr>
-                                <td>items</td>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    Allows to specify new kind of items or to
-                                    overwrite a default item. You can add a MAC 
-                                    adress pattern or a credit card one.<br/>
-                                    An item is defined by four properties :
-                                    <ul>
-                                        <li>selector : a CSS selector to 
-                                            determine which fields in the have 
-                                            to be checked</li>
-                                        <li>pattern : a regular expression to 
-                                            the field</li>
-                                        <li>autoTrim : if true, field will be
-                                            trimed before being checked.
-                                        </li>
-                                        <li>
-                                            ajaxCheck : TO BE DONE
-                                        </li>
-                                    </ul>
-                                   See the default values
-                                   <a href="#default-items">here</a><br/>
-                                   Example :
-                                    <pre>
-"items":{
-  "MACAdress":{ //Defines a new kind of check
-      "selector":"input.macAdress",
-      "pattern':'^([0-9A-F]{2}:){6}$'
-  },
-  "birthday":{ //Specifies a new rule for bithday items
-      "pattern":"^[0-9]{2}-[0-9]{2}-[0-9]{4}$"
-  }
-}
-                                    </pre>
-                                   <div class="alert alert-warning">
-                                       <span class="important">Warning :</span>
-                                       For a new item, selector and pattern are
-                                       require. autoTrim and ajaxCheck options
-                                       will be respectively set to true and false 
-                                       by default.
-                                   </div>
-                                </td>
-                                <td>
-                                    1.0+
-                                </td>
-                            </tr>
+
                             </tbody>
                          </table>
                     </div>
                 </div>
-            </div>            
-
+            </div>                        
+            
             <!-- Default items -->
             <div class="row">
                 <div class="col-md-8">
@@ -586,9 +689,9 @@
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <!-- Include all compiled plugins (below), or include individual files as needed -->
-        <script src="../bootstrap/bootstrap.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
         <!-- CSS and Javascript code coloration -->
-        <script type="text/javascript" src="../js/prism.js"></script>
+        <script type="text/javascript" src="js/prism.js"></script>
         <!-- Jquery checkform plugin -->
         <script type="text/javascript" src="../js/jquery.checkform1.2.js"></script>
         <!-- Initialize tabs code -->
@@ -597,10 +700,12 @@
                 e.preventDefault();
                 $(this).tab('show');
             });
-            $('.tab-pane .language-markup').each(function(){                
-                var form = $(this).parents(".col-md-9").siblings(".col-md-3")
-                                  .find('.example-wrapper');                
-                $(this).text(form.html());
+            $('.tab-pane').each(function(){
+                var htmlCode = $(this).find('.language-markup');
+                var form = htmlCode.parents(".col-md-9").siblings(".col-md-3")
+                                  .find('.example-wrapper');
+                
+                htmlCode.text(form.html());
             });
             $("form#default-conf").checkform();
             $("form#example2").checkform({
@@ -616,8 +721,7 @@
                     }
                 }
             });
-        </script>
-        
+            </script>        
         </body>
 </html>
 
