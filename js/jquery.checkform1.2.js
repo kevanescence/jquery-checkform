@@ -208,7 +208,7 @@ function jqchf_getTemplateNewItem(){
             form.on("submit", function(){
                 //beforeValidate()
                 $(this).checkform("validate");                
-                var res = form.data("jqchf-ok");                
+                var res = form.data("jqchf-form-ok");                
                 return res === true /*&& afterValidate() */;
             });
             
@@ -286,8 +286,7 @@ function jqchf_getTemplateNewItem(){
                     //break; NO BREAK, continue on case text
                     case 'text':                   
                         var fieldName = $item.attr("name");
-                        var fieldLabel = $item.prev('label');
-                        console.log(fieldLabel);
+                        var fieldLabel = $item.prev('label');                        
                         //Required if several classes are provided in CSSClass
                         var cssClassFilter = cssClass.replace(" ", ".");
                         var lblCSSClass = "lbl-err-" + fieldName;
