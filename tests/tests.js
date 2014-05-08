@@ -23,7 +23,8 @@ test("No option", function() {
     equal(data, defaultItems.name.pattern,"Default pattern is initialized");
     data = input.data("jqchf-role");
     equal(data, 'name',"Default role is initialized");
-    
+    data = input.data("jqchf-ajax");
+    equal(data, false,"Default ajax check is initialized");
     data = input.data("jqchf-trim");
     equal(data, defaultItems.name.autoTrim,"Default trim is initialized");
     
@@ -199,59 +200,7 @@ test("Parameter : check the given item", function(){
     removeContext(context);
     
 });
-/************* Context 3 : an ajax checking       ************/
-asyncTest("Ajax : new and email fields are checked by ajax", function(){
-    var defItems = jqchf_getDefaultItems();
-    expect(5);//Number of tests expected
-    var indContext = 3;
-    var form = bindContext(indContext);
-    form.checkform({
-       ajaxURL:'ajax.php',
-       ajaxEvent:'submit',
-       items:{
-           'new':{
-               selector:'[name=new]',
-               pattern:'.+',
-               ajaxCheck:true
-           },
-           mail:{
-               ajaxCheck:true
-           }
-       }
-    });    
-    var mail = form.find(defItems.mail.selector);
-    var name = form.find(defItems.name.selector);
-    var pws = form.find(defItems.password.selector);
-    var newField = form.find('[name=new]');
-    //We are sure that bad value will be caused by an detected by the server
-    mail.val("bad@test.fr");
-    name.val("avalidname");
-    pws.val("validnotbad");//Contains bad but won't be checked by server
-    newField.val("good");    
-    form.checkform("check");    
-    setTimeout(function(){
-        start();
-        equal(form.data("jqchf-form-ok"),false
-              ,'jqchf-form-ok set to false when ajax return wrong');
-        equal(mail.data("jqchf-ok"),false,
-               'ajax : jqchf-ok is set to false for a wrong data');
-        equal(newField.data("jqchf-ok"), true,
-                'ajax : jqchf-ok is set to true for a good data');
-        equal(pws.data("jqchf-ok"), true,
-                'a field with ajaxCheck to false is not impacted');
-        stop();
-        mail.val("valid@test.fr");
-        form.checkform("check"); 
-        setTimeout(function(){
-            start();
-            equal(form.data("jqchf-form-ok"),true
-              ,'jqchf-form-ok set to true when ajax return true');
-            removeContext(indContext);
-        },50);
-        
-    },50);
-    //No removeContext here, must be call at the end of the timer
-});
+
 /*************************************************************/
 /******       Tests of the  uiAction method            *******/
 /*************************************************************/
@@ -355,44 +304,6 @@ test("style = flash", function(){
     
     removeContext(context);
 });
-/************* Context 5 : Ajax action ************/
-asyncTest("uiAction display a previous retrieved ajax message",function(){
-    var defItems = jqchf_getDefaultItems();
-    var defOptions = jqchf_getDefaultOptions();
-    expect(4);//Number of tests expected
-    var indContext = 2;
-    var form = bindContext(indContext);
-    form.checkform({
-       ajaxURL:'ajax.php',
-       ajaxEvent:'submit',
-       items:{
-           name:{
-               ajaxCheck:true
-           }
-       }
-    });    
-    var mail = form.find(defItems.mail.selector);
-    var name = form.find(defItems.name.selector);    
-    
-    //Mail won't be checked
-    mail.val("bad@test.fr");
-    //We are sure that bad value will be caused by an error detected by the server
-    name.val("abadname");    
-    form.checkform("check");
-    setTimeout(function(){
-        start();
-        form.checkform("uiAction");
-        var spansAjax = name.next('span.ajax.' + defOptions.CSSClass);        
-        equal(spansAjax.size(),1,'uiAction adds a span after the wrong field');
-        notEqual(spansAjax.text(),"",'uiAction displays the ajax message');
-        spansAjax = mail.next('span.jqchf-ajax.' + defOptions.CSSClass);
-        equal(spansAjax.size(),0,'uiAction does not add span after not checked fields');
-        var blocMessage = form.find('.' + defOptions.CSSClass).not(".jqchf-ajax");
-        equal(blocMessage.size(),1,
-                'uiAction display the bloc message considering ajax checking');
-        removeContext(indContext);
-    },50);
-});
 /*************************************************************/
 /******       Tests of the method validate             *******/
 /*************************************************************/
@@ -473,6 +384,109 @@ test("Argument - Method is called on a specific item",function(){
     removeContext(context);
 });
 /*************************************************************/
+/******       Tests of the method destroy              *******/
+/*************************************************************/
+module("Method : validateAjax");
+asyncTest("ajax checking is retrieved", function(){  
+    var AJAX_TIMEOUT = 5;
+    var defItems = jqchf_getDefaultItems();
+    expect(7);//Number of tests expected
+    var indContext = 3;
+    var form = bindContext(indContext);
+    form.checkform({
+       ajaxURL:'ajax.php',
+       ajaxEvent:'submit',
+       items:{
+           'new':{
+               selector:'[name=new]',
+               pattern:'.+',
+               ajaxCheck:true
+           },
+           mail:{
+               ajaxCheck:true
+           }
+       }
+    });    
+    var mail = form.find(defItems.mail.selector);
+    var name = form.find(defItems.name.selector);
+    var pws = form.find(defItems.password.selector);
+    var newField = form.find('[name=new]');    
+    //We are sure that bad value will be caused by an detected by the server
+    mail.val("bad@test.fr");
+    name.val("avalidname");
+    pws.val("validnotbad");//Contains bad but won't be checked by server
+    newField.val("good");    
+    form.checkform("validateAjax");    
+    setTimeout(function(){
+        start();
+        equal(form.data("jqchf-form-ajax-ok"),false
+              ,'jqchf-form-ajax-ok set to false when ajax return wrong');
+        equal(mail.data("jqchf-ajax-ok"),false,
+               'ajax : jqchf-ajax-ok is set to false for a wrong data');
+        equal(mail.data("jqchf-ajax-msg"),"email is FAILED",
+               'ajax : the ajax message is stored when FAILED');               
+        equal(newField.data("jqchf-ajax-ok"), true,
+                'ajax : jqchf-ajax-ok is set to true for a good data');
+        equal(newField.data("jqchf-ajax-msg"), "new is OK",
+                'ajax : the ajax returned message is stored when OK');
+        equal(pws.data("jqchf-ajax-ok"), undefined,
+                'a field with ajaxCheck to false is not impacted');
+        stop();
+        mail.val("valid@test.fr");
+        form.checkform("check"); 
+        setTimeout(function(){
+            start();
+            equal(form.data("jqchf-form-ok"),true
+              ,'jqchf-form-ok set to true when ajax return true');
+            removeContext(indContext);
+        },AJAX_TIMEOUT);
+        
+    },AJAX_TIMEOUT);
+    //No removeContext here, must be call at the end of the timer
+});
+asyncTest("uiAction display a previous retrieved ajax message",function(){
+    var AJAX_TIMEOUT = 5;
+    var defItems = jqchf_getDefaultItems();
+    var defOptions = jqchf_getDefaultOptions();
+    expect(5);//Number of tests expected
+    var indContext = 2;
+    var form = bindContext(indContext);
+    form.checkform({
+       ajaxURL:'ajax.php',
+       ajaxEvent:'submit',
+       items:{
+           name:{
+               ajaxCheck:true
+           }
+       }
+    });    
+    var mail = form.find(defItems.mail.selector);
+    var name = form.find(defItems.name.selector);    
+    
+    //Mail won't be checked
+    mail.val("bad@test.fr");
+    //We are sure that bad value will be caused by an error detected by the server
+    name.val("abadname");    
+    form.checkform("validateAjax");
+    setTimeout(function(){
+        start();        
+        var spansAjax = name.next('span.ajax.' + defOptions.CSSClass);            
+        equal(spansAjax.size(),1,'uiAction adds a span after the wrong field');
+        notEqual(spansAjax.text(),"",'uiAction displays the ajax message');
+        spansAjax = mail.next('span.jqchf-ajax.' + defOptions.CSSClass);
+        equal(spansAjax.size(),0,'uiAction does not add span after not checked fields');
+        var blocMessage = form.find('.' + defOptions.CSSClass).not(".ajax");
+        equal(blocMessage.size(),1,
+                'uiAction perform the default display considering the ajax checking');
+        name.val("avalidfield");
+        //validateAjax on form id asynchronous
+        form.checkform("validateAjax");
+        spansAjax = name.next('span.ajax.' + defOptions.CSSClass);
+        equal(spansAjax.size(),0,'uiAction removes the span for a good field');
+        removeContext(indContext);                
+    },AJAX_TIMEOUT);
+});
+/*************************************************y************/
 /******       Tests of the method destroy              *******/
 /*************************************************************/
 module("Method - destroy ");

@@ -156,7 +156,18 @@ form#registry6 input {
 #registry8 label.checkform-wrong,#registry9 label.checkform-wrong {
 	color: red;
 }
-
+#registry10 span.ajax.checkform-wrong {    
+    background-image:url(../images/erreur.png);
+    background-repeat: no-repeat;
+    overflow: hidden;
+    margin-left: 5px;
+    margin-top:2px;
+    padding-left: 14px;
+    width:0;
+    height: 14px;
+    display: inline-block;
+    vertical-align: top;
+}
 input[type="button"],input[type="submit"] {
         display:block;
 	font-family: Helvetica, Arial, sans-serif;

@@ -42,3 +42,13 @@ $('form#example3').checkform({
         }
     }
 });
+$('form#example4').checkform({
+    ajaxURL: 'ajax.php',
+    ajaxEvent: 'lostfocus',
+    items: {
+        firstname: {
+            selector:'[name=ex4-firstname]',
+            ajaxCheck: true
+        }
+    }
+});

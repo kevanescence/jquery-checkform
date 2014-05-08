@@ -16,6 +16,15 @@
                 $('#registry6').checkform({items:{"other":{"selector":"input.number",'pattern':'^[0-9]+$'}},type:'input'});
                 $('#registry7').checkform({type:'text',language:'fr'});
                 $('#registry8, #registry9').checkform({type:'label'});
+                $('#registry10').checkform({
+                    ajaxURL:"ajax.php",
+                    ajaxEvent:"lostfocus",                    
+                    items:{
+                        mail:{
+                            ajaxCheck:true
+                        }
+                    }
+                });
         });
     </script>
     </head>
@@ -103,6 +112,19 @@
             <label for="r9_birthday">Birthday</label><input id="r9_birthday" name="birthday" type="text" />
             <label for="r9_firstname">Firstname</label><input id="r9_firstname" name="firstname" type="text" />
             <input id="register9" type="submit" value="Register"  />
+            </fieldset>
+        </form>
+        <form action="#" id="registry10" method="post">
+            <fieldset>
+            <h2>Ajax checking</h2>
+            <label for="r10_email">Mail adress</label>
+            <input id="r10_email" name="email" type="text"/>            
+            <label for="r10_firstname">Firstname</label>
+            <input id="r10_firstname" name="firstname" type="text"/>
+            <label for="r10_comment">Your comment</label>
+            <textarea name="r10_comment" 
+                      id="r10_comment" cols="30" rows="10"></textarea>
+            <input id="register10" type="submit" value="Register" />
             </fieldset>
         </form>
     </body>

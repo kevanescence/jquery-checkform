@@ -37,11 +37,12 @@ function jqchf_getDefaultOptions() {
     return {
         type: 'text',
         event: 'submit',
-        autoCheck: true,
+        autoCheck: true,        
         language: 'en',
         CSSClass: 'checkform-wrong',
         target: null, //? really needed
-        ajaxCheck: null,
+        ajaxURL: null,
+        ajaxEvent:null,
         afterValidate: function(){return true;},
         beforeValidate: function(){return true;}
     };
@@ -55,48 +56,57 @@ function jqchf_getDefaultItems(){
         'mail': {
             'selector': '[name=email]',
             'pattern': "^[a-z0-9][a-z0-9\._-]*@([a-z0-9\._-]+[\._-]?[a-z0-9]+)+\.[a-z]{2,4}$",
-            'autoTrim':true
+            'autoTrim':true,
+            'ajaxCheck':false
         },
         'name': {
             'selector': '[name=name]',
             'pattern': "^([a-zA-Zéèëïêàâùçîû][ \'-]?)+[a-zA-Zéèëïêàâùçîû]+$",
-            'autoTrim':true
+            'autoTrim':true,
+            'ajaxCheck':false
         },
         'firstname': {
             'selector': '[name=firstname]',
             'pattern': "^([a-zA-Zéèëïêàâùçîû][ \'-]?)+[a-za-zA-Zéèëïêàâùçîû]+$",
-            'autoTrim':true
+            'autoTrim':true,
+            'ajaxCheck':false
         },
         'pseudo': {
             'selector': '[name=pseudo]',
             'pattern': '^[a-zA-Zéèëïêàâùçîû0-9][a-zA-Zéèëïêàâùçîû0-9_ -]{0,13}[a-zA-Zéèëïêàâùçîû0-9]$',
-            'autoTrim':true
+            'autoTrim':true,
+            'ajaxCheck':false
         },
         'password': {
             'selector': '[name=password]',
             'pattern': '^.{4,25}$',
-            'autoTrim':false
+            'autoTrim':false,
+            'ajaxCheck':false
         },
         'birthday': {
             'selector': '[name=birthday]',
             'pattern': '^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$',
-            'autoTrim':true
+            'autoTrim':true,
+            'ajaxCheck':false
         },
         'phonenumber': {
             'selector': '[name=phonenumber]',
             'pattern': '^0[1-9]([-. ]?[0-9]{2}){4}$',
-            'autoTrim':true
+            'autoTrim':true,
+            'ajaxCheck':false
         },
         'website': {
             'selector': '[name=website]',
             'pattern': '^[a-zA-Z0-9\-\.]+\.(com|org|net|mil|edu|COM|ORG|NET|MIL|EDU)$',
-            'autoTrim':true
+            'autoTrim':true,
+            'ajaxCheck':false
         }
     };
 }
 function jqchf_getTemplateNewItem(){
     return {
-        autoTrim:true
+        autoTrim:true,
+        ajaxCheck:false
     };
 }
 (function($) {
@@ -107,13 +117,14 @@ function jqchf_getTemplateNewItem(){
     /******             List of available options          *******/
     /*************************************************************/
     var availableOptions = {
-        type: ['text', 'html5', 'label', 'flash', 'input'],
+        type: ['text','label', 'flash', 'input'],
         event: ['submit', 'change', 'lostfocus'],
         autoCheck: [true, false],
         language: ['en', 'fr', 'sp', 'ge'],
         CSSClass: null,
         target: null, //? really needed
-        ajaxCheck: null,
+        ajaxURL: null,
+        ajaxEvent:['submit','lostfocus','change'],
         afterValidate: function(){return true;},
         beforeValidate: function(){return true;}
     };
@@ -174,7 +185,7 @@ function jqchf_getTemplateNewItem(){
             var target = form.find(filter); 
             /*For items, define default options */
             filter = "";
-            for(var i in items){//console.log(i);
+            for(var i in items){
                 filter += items[i].selector + ",";
                 //If this is a custom item, define default values
                 if(defaultItems[i] === undefined){
@@ -183,23 +194,38 @@ function jqchf_getTemplateNewItem(){
                         $.error("Jquery checkform : you must precise pattern " +
                             "and selector for item " + i);
                     }
-                    $.extend(items[i],jqchf_getTemplateNewItem());
+                    var tmp = new Object();                    
+                    $.extend(tmp,jqchf_getTemplateNewItem(),items[i]);                    
+                    items[i] = tmp;
                 }
                 //Allows to retrieve default configuration when autoCheck = false
                 else if (args.autoCheck === false){
                     $.extend(items[i],defItems[i]);
+                }
+                if (items[i].ajaxCheck) {
+                    target.filter(items[i].selector)
+                          .data('jqchf-ajax-ok', false);
                 }
                 //Initialize data 
                 target.filter(items[i].selector)
                       .data('jqchf-reg', items[i].pattern)
                       .data('jqchf-role', i)
                       .data('jqchf-trim', items[i].autoTrim)
+                      .data('jqchf-ajax', items[i].ajaxCheck)   
                       .addClass('jqchf-flag'); //Allows to retrieve items easily
             }
-            filter = filter.substr(0, filter.length - 1);            
+            filter = filter.substr(0, filter.length - 1);
+            var fields = form.find(filter);
             if(eventMap[args.event]){                
-                form.find(filter).on(eventMap[args.event], function(e){
+                fields.on(eventMap[args.event], function(e){
                     form.checkform("validate", $(this));                    
+                });
+            }            
+            if(eventMap[args.ajaxEvent]){  
+                fields.filter(function(){
+                    return $(this).data("jqchf-ajax") === true;
+                }).on(eventMap[args.ajaxEvent],function(e){                    
+                    form.checkform("validateAjax",$(this));
                 });
             }
             delete args.items;            
@@ -207,8 +233,12 @@ function jqchf_getTemplateNewItem(){
             //In all case the form submit event is built
             form.on("submit", function(){
                 //beforeValidate()
+                //Execute the ajax checking (asynchronous)
+                if(form.data("jqchf-form-opt").ajaxURL !== null){
+                    $(this).checkform("validateAjax");
+                }
                 $(this).checkform("validate");                
-                var res = form.data("jqchf-form-ok");                
+                var res = form.data("jqchf-form-ok") && form.data("jqchf-form-ajax-ok");                
                 return res === true /*&& afterValidate() */;
             });
             
@@ -270,10 +300,13 @@ function jqchf_getTemplateNewItem(){
             if($item){
                 $item = $($item);
                 var uiType = form.data("jqchf-form-opt").type;
-                var formIsWrong = form.data("jqchf-form-ok") === false;
-                var fieldIsWrong = $item.data("jqchf-ok") === false;                
+                var formIsWrong = form.data("jqchf-form-ok") === false ||
+                                    form.data("jqchf-form-ajax-ok") === false;                
+                var fieldIsWrong = $item.data("jqchf-ok") === false ||
+                        ($item.data("jqchf-ajax-ok") !== undefined && $item.data("jqchf-ajax-ok") === false);                
                 var cssClass = form.data("jqchf-form-opt").CSSClass;
                 var closeLink = "";
+                //ui action on all kind of checking (ajax and !ajax)
                 switch(uiType){
                     case 'flash':
                         var cssClassFilter = cssClass.replace(" ", ".");
@@ -316,7 +349,7 @@ function jqchf_getTemplateNewItem(){
                         }
                         else {                            
                             msgBloc.children(lblSelector).remove();                            
-                            if(!formIsWrong){                                
+                            if(!formIsWrong){                                  
                                 form.find("div." + cssClassFilter).remove();
                             }
                         }
@@ -337,6 +370,21 @@ function jqchf_getTemplateNewItem(){
                     }
                     default:
                         //thwon unknown ui type. See documentation
+                }
+                //specific ajax checking display
+                var ajaxCheck = $item.data("jqchf-ajax");                
+                if(ajaxCheck){                    
+                    var ajaxStatus = $item.data("jqchf-ajax-ok");
+                    var spanAjax = $item.next("span.ajax." + cssClass);
+                    if(spanAjax.size() === 0 && !ajaxStatus) {
+                        var span = $("<span></span>")
+                                    .text($item.data("jqchf-ajax-msg"))
+                                    .addClass("ajax " + cssClass);
+                        $item.after(span);                    
+                    }
+                    else if(ajaxStatus){
+                        spanAjax.remove();
+                    }
                 }
             }
             else {               
@@ -363,6 +411,53 @@ function jqchf_getTemplateNewItem(){
               .removeData("jqchf-form-ok")
               .removeClass("jqchf-flag"); 
             form.off("submit");
+        },
+        validateAjax:function($item){
+            var form = $(this);
+            var calledOnItem = $item !== undefined;
+            var data = new Object();
+            if(calledOnItem){
+               $item = $($item);
+               data[$item.attr("name")] = $item.val();
+            }
+            else {                
+                form.find('.jqchf-flag').filter(function(){                    
+                    return $(this).data("jqchf-ajax") === true;
+                }).each(function(){
+                    data[$(this).attr("name")] = $(this).val();
+                });
+            }
+            //console.log(data);
+            $.ajax({
+                   url:form.data("jqchf-form-opt").ajaxURL,
+                   dataType:"json",
+                   type:"POST",
+                   crossDomain:true,
+                   async:calledOnItem,//synchronous for ajax form checking
+                   data:data
+                }).success(function(response){                    
+                    var items = response.items;
+                    var formStatus = response.status === 'OK'?true:false;
+                    //looks over checked fields                    
+                    for(var name in items){
+                        var status = items[name].status==='OK'?true:false;
+                        form.find('[name=' + name + ']')
+                            .data("jqchf-ajax-ok",status)
+                            .data("jqchf-ajax-msg",items[name].message);
+                    }
+                    if(!calledOnItem){                        
+                        form.data("jqchf-form-ajax-ok",
+                                  formStatus);
+                        form.checkform("uiAction");
+                    }
+                    else {
+                        //Update UI Action of the checked field
+                        form.checkform("uiAction",$item);
+                    }
+                    //$item.data('jqchf-ajax-ok',status);
+                }).error(function(error){
+                    console.log(error);
+                });
         }
     };
     var defaultItems = jqchf_getDefaultItems();    
