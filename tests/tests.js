@@ -278,12 +278,16 @@ test("style = flash", function(){
     var defaultOptions = jqchf_getDefaultOptions();
     var context = 2;
     var form = bindContext(context);    
-    form.checkform({type:'flash'});
+    //Force to have at least 3 classes
+    var cssClass = defaultOptions.CSSClass + ' other class';
+    form.checkform({type:'flash', CSSClass:cssClass});
     form.find(defaultItems.name.selector).val("wr0ng");
     form.checkform("check").checkform("uiAction");    
     
-    var nbElem = form.find("." + defaultOptions.CSSClass).size();
+    //Check that the element have all the classes
+    var nbElem = form.find("." + defaultOptions.CSSClass + '.other.class').size();    
     equal(nbElem, 1, 'Adding an html element in the form when item is wrong');
+    
     var link = form.find("." + defaultOptions.CSSClass).find('a');    
     notEqual(link.size(),0, 'Flash element contain a link to remove it');
 

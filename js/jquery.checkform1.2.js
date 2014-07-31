@@ -309,7 +309,7 @@ function jqchf_getTemplateNewItem(){
                 //ui action on all kind of checking (ajax and !ajax)
                 switch(uiType){
                     case 'flash':
-                        var cssClassFilter = cssClass.replace(" ", ".");
+                        var cssClassFilter = cssClass.replace(/\s/g, ".");
                         closeLink = '<a href="#" title="Close flash">X</a>';
                         form.on( "click", "a", function(e) {                            
                             $(this).parentsUntil('form')
@@ -321,7 +321,7 @@ function jqchf_getTemplateNewItem(){
                         var fieldName = $item.attr("name");
                         var fieldLabel = $item.prev('label');                        
                         //Required if several classes are provided in CSSClass
-                        var cssClassFilter = cssClass.replace(" ", ".");
+                        var cssClassFilter = cssClass.replace(/\s/g, "."); 
                         var lblCSSClass = "lbl-err-" + fieldName;
                         var lblSelector = "label." + lblCSSClass;                        
                         var msgBloc = form.find("div." + cssClassFilter);                        
