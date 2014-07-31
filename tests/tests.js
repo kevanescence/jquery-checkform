@@ -388,7 +388,7 @@ test("Argument - Method is called on a specific item",function(){
     removeContext(context);
 });
 /*************************************************************/
-/******       Tests of the method destroy              *******/
+/******       Tests of the method validateAjax         *******/
 /*************************************************************/
 module("Method : validateAjax");
 asyncTest("ajax checking is retrieved", function(){  

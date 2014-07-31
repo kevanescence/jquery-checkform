@@ -238,7 +238,10 @@ function jqchf_getTemplateNewItem(){
                     $(this).checkform("validateAjax");
                 }
                 $(this).checkform("validate");                
-                var res = form.data("jqchf-form-ok") && form.data("jqchf-form-ajax-ok");                
+                var res = form.data("jqchf-form-ok") ;
+                if(form.data("jqchf-form-opt").ajaxURL) {
+                    res = res && form.data("jqchf-form-ajax-ok");
+                }                        
                 return res === true /*&& afterValidate() */;
             });
             
