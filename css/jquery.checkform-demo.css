@@ -79,7 +79,7 @@ form {
 }
 
 /*For registry 3*/
-span.flash-error {
+.flash-error {
 	background-color: #fe1611; /*Pour les navigateurs ne reconnaissant pas le dégradé*/
 background-image: -webkit-linear-gradient(#ff8686,#fe1611);
 
@@ -99,7 +99,7 @@ background-image: -webkit-linear-gradient(#ff8686,#fe1611);
 	color: #FFF;
 }
 
-span.flash-error a {
+.flash-error a {
 	position: relative;
 	color: #fff;
 	text-decoration: none;
@@ -111,11 +111,11 @@ span.flash-error a {
 	-moz-opacity: 0.8;
 	padding: 2px;
 }
-span.flash-error label {
+.flash-error label {
     padding:0 !important;
     width:auto;
 }
-span.flash-error a:hover {
+.flash-error a:hover {
 	background-color: #d2d2d2;
 }
 
