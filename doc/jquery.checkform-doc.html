@@ -288,7 +288,7 @@
             <div class="row">                                
                 <h3>Ajax checking and REST</h3>
                 <div class="row">
-                    
+                    <p>Try a firstname containing "bad"</p>
                 </div>
                 <div class="col-md-3">
                     <div class="example-wrapper">
@@ -317,13 +317,28 @@
                     <ul class="nav nav-tabs">
                       <li class="active"><a href="#example4-js" data-toggle="tab">JS</a></li>
                       <li><a href="#example4-html" data-toggle="tab">HTML</a></li>
-                      <li><a href="#example4-css" data-toggle="tab">CSS</a></li>                      
+                      <li><a href="#example4-css" data-toggle="tab">CSS</a></li>
+                      <li><a href="#example4-json" data-toggle="tab">Json</a></li> 
                     </ul>
 
                     <!-- Tab panes -->
                     <div class="tab-content">
                       <div class="tab-pane active" id="example4-js">
                          <code class="language-javascript">
+$('form#example4').checkform({
+    ajaxURL: 'ajax.php',
+    ajaxEvent: 'lostfocus',
+    afterValidate: function() {
+      alert("All fields are ok !\nPerform application stuff now.");
+      return false;//Prevent the form submission
+    },
+    items: {
+        firstname: {
+            selector:'[name=ex4-firstname]',
+            ajaxCheck: true
+        }
+    }
+});
                          </code>
                       </div>
                       <div class="tab-pane" id="example4-html">
@@ -333,7 +348,20 @@
                           <code class="language-css">
                               /* No CSS required excepted bootstrap */
                           </code>
-                      </div>                      
+                      </div>
+                      <div class="tab-pane" id="example4-json">
+                          <code class="language-json">                              
+{
+    "items":{
+            "ex4-firstname":{
+                "status":"FAILED",
+                "message":"ex4-firstname is FAILED"
+            }
+    },
+    "status":"FAILED"
+}
+                          </code>
+                      </div>   
                     </div>
 
 
@@ -364,8 +392,9 @@
                                 <td>null</td>
                                 <td>
                                     A function to be executed after the form has 
-                                    been validated. If at least one field is 
-                                    wrong, this function won't be executed. 
+                                    been validated. <span class="important">
+                                    If at least one field is wrong, this function
+                                    won't be executed. </span>
                                     This function has to return true to let the 
                                     browser performing the default submission. <br/>
                                     In REST context application, form submission

@@ -45,6 +45,10 @@ $('form#example3').checkform({
 $('form#example4').checkform({
     ajaxURL: 'ajax.php',
     ajaxEvent: 'lostfocus',
+    afterValidate: function() {
+      alert("All fields are ok !\nPerform application stuff now.");
+      return false;//Prevent the form submission
+    },
     items: {
         firstname: {
             selector:'[name=ex4-firstname]',

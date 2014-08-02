@@ -44,7 +44,9 @@ function jqchf_getDefaultOptions() {
         ajaxURL: null,
         ajaxEvent:null,
         afterValidate: function(){return true;},
-        beforeValidate: function(){return true;}
+        beforeValidate: function(){return true;},
+        afterItemValidate: function($item){return true;},
+        beforeItemValidate: function($item){return true;}
     };
 }
 
@@ -126,7 +128,9 @@ function jqchf_getTemplateNewItem(){
         ajaxURL: null,
         ajaxEvent:['submit','lostfocus','change'],
         afterValidate: function(){return true;},
-        beforeValidate: function(){return true;}
+        beforeValidate: function(){return true;},
+        afterItemValidate: function($item){return true;},
+        beforeItemValidate: function($item){return true;}
     };
 
     /*************************************************************/
@@ -168,6 +172,14 @@ function jqchf_getTemplateNewItem(){
             if(typeof args.beforeValidate !== 'function'){
                 $.error("Jquery checkform : value " + args.items 
                         + " not allowed for beforeValidate");
+            }
+            if(typeof args.afterItemValidate !== 'function'){
+                $.error("Jquery checkform : value " + args.items 
+                        + " not allowed for afterItemValidate");
+            }
+            if(typeof args.beforeItemValidate !== 'function'){
+                $.error("Jquery checkform : value " + args.items 
+                        + " not allowed for beforeItemValidate");
             }
             ////// End of user errors ////
             //User did not overwritte item
@@ -216,9 +228,14 @@ function jqchf_getTemplateNewItem(){
             }
             filter = filter.substr(0, filter.length - 1);
             var fields = form.find(filter);
+            
+            //Bind checking on the field considering the given event
             if(eventMap[args.event]){                
                 fields.on(eventMap[args.event], function(e){
-                    form.checkform("validate", $(this));                    
+                    form.data("jqchf-form-opt").beforeItemValidate($(this));
+                    form.checkform("validate", $(this));
+                    if($(this).data("jqchf-ok") === true)
+                        form.data("jqchf-form-opt").afterItemValidate($(this));
                 });
             }            
             if(eventMap[args.ajaxEvent]){  
@@ -232,7 +249,7 @@ function jqchf_getTemplateNewItem(){
             form.data("jqchf-form-opt",args);
             //In all case the form submit event is built
             form.on("submit", function(){
-                //beforeValidate()
+                form.data("jqchf-form-opt").beforeValidate()
                 //Execute the ajax checking (asynchronous)
                 if(form.data("jqchf-form-opt").ajaxURL !== null){
                     $(this).checkform("validateAjax");
@@ -241,8 +258,11 @@ function jqchf_getTemplateNewItem(){
                 var res = form.data("jqchf-form-ok") ;
                 if(form.data("jqchf-form-opt").ajaxURL) {
                     res = res && form.data("jqchf-form-ajax-ok");
-                }                        
-                return res === true /*&& afterValidate() */;
+                }
+                console.log(res);
+                if(res !== false)
+                    return form.data("jqchf-form-opt").afterValidate();
+                return false;
             });
             
         },       
@@ -281,21 +301,21 @@ function jqchf_getTemplateNewItem(){
         },
         validate:function($item){          
             var form = $(this);
-            var beforeValidate = form.data("jqchf-form-opt").beforeValidate;    
+//            var beforeValidate = form.data("jqchf-form-opt").beforeValidate;    
             if($item){
                 $item = $($item);
-                beforeValidate($item);
+//                form.data("jqchf-form-opt").beforeItemValidate($item);
                 form.checkform("check",$item);
                 form.checkform("uiAction",$item);
-                if(form.data("jqchf-form-ok") === true)
-                    form.data("jqchf-form-opt").afterValidate($item);
+//                if(form.data("jqchf-form-ok") === true)
+//                    form.data("jqchf-form-opt").afterItemValidate($item);
             }
             else {                                            
-                beforeValidate();
+//                beforeValidate();
                 form.checkform("check");
                 form.checkform("uiAction");
-                if(form.data("jqchf-form-ok") === true)
-                    form.data("jqchf-form-opt").afterValidate();
+//                if(form.data("jqchf-form-ok") === true)
+//                    form.data("jqchf-form-opt").afterValidate();
             }
         }, 
         uiAction:function($item){
