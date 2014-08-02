@@ -316,31 +316,24 @@ module("Method - validate");
 test("No argument - Method is called on the form", function(){
     var defaultItems = jqchf_getDefaultItems();
     var defaultOptions = jqchf_getDefaultOptions();
-    var context = 2;
-    var before = 0; var after = 0;
+    var context = 2;    
     var form = bindContext(context);
     form.checkform({
         event:'submit',
-        style:'text',
-        beforeValidate:function(){before++;},
-        afterValidate:function(){after++;}
+        style:'text'
     });    
     var mail = form.find(defaultItems.mail.selector);
     var name = form.find(defaultItems.name.selector);
     mail.val("@bad!email@dress");
     //Validate with wrong values
-    form.checkform("validate");
-    //equal(before, 1, 'beforeValidate is executed');
-    //equal(after,0, 'afterValidate is not executed if form is wrong');    
+    form.checkform("validate");      
     var messageBloc = form.find("." + defaultOptions.CSSClass);
     equal(messageBloc.size(), 1, "A message is displayed when form is wrong");
     
     //Validate with good value
     mail.val("a.good@email.com");
     name.val("myname");
-    form.checkform("validate");
-    //equal(before, 2, 'beforeValidate is always executed');
-    //equal(after,1,'afterValidate is executed');    
+    form.checkform("validate");    
     messageBloc = form.find("." + defaultOptions.CSSClass);
     equal(messageBloc.size(), 0, "The message bloc is removed when form is ok");
     removeContext(context);
@@ -388,6 +381,77 @@ test("Argument - Method is called on a specific item",function(){
     removeContext(context);
 });
 
+/*************************************************************/
+/******       Tests of the methods  beforeValidate      ******/
+/*******                            afterValidate       ******/
+/*******                            beforeItemValidate  ******/
+/*******                            afterItemValidate   ******/
+/*************************************************************/
+module("Functionality : before and after validation functions");
+test("beforeValidate and afterValidate", function(){
+    var defaultItems = jqchf_getDefaultItems();    
+    var context = 2;
+    var before = 0; var after = 0;
+    var form = bindContext(context);
+    form.checkform({
+        event:'submit',
+        style:'text',
+        beforeValidate:function(){before++;},
+        afterValidate:function(){after++; return false;} //avoid form submision
+    });
+    var name = form.find(defaultItems.name.selector);
+    var mail = form.find(defaultItems.mail.selector);
+    
+    mail.val("mail@mail.com");
+    name.val("b4dname");    
+    form.submit();    
+    equal(before, 1, 'beforeValidate is always executed');
+    equal(after, 0, 'afterValidate is not executed if\
+                     there is at least one error' );
+    
+    name.val("agoodname");
+    form.submit();
+    equal(before, 2, 'beforeValidate is still executed');
+    equal(after,1,'afterValidate is executed when everything is ok');
+    
+    removeContext(context);
+});
+
+test("beforeItemValidate and afterItemValidate", function(){    
+    var defaultItems = jqchf_getDefaultItems();
+    var context = 2;
+    var form = bindContext(context);
+    var beforeValidate = 0; var afterValidate = 0;    
+    form.checkform({
+        type:'input',
+        event:'lostfocus',
+        beforeItemValidate:function($item){
+            beforeValidate++;
+            $item.addClass('fakeClass');            
+        },
+        afterItemValidate:function($item){
+            afterValidate++;
+            $item.addClass('fakeClass2');            
+        }
+    });
+    
+    var name = form.find(defaultItems.name.selector);
+    var mail = form.find(defaultItems.mail.selector);
+    name.val("abadname");
+    name.blur();
+    equal(beforeValidate, 1, "beforeValidate is always executed");
+    ok(name.hasClass('fakeClass'), "item is given as argument");
+    ok(afterValidate, 0, "afterValidate is not executed if the field is wrong");
+    
+    
+    name.val("agoodname");
+    name.blur();
+    equal(beforeValidate, 2, "beforeValidate is still executed");
+    ok(afterValidate, 1, "afterValidate is exectued if the field is ok");
+    ok(name.hasClass("fakeClass2"),"item is given in arguement");
+    
+    removeContext(context);
+});
 /*************************************************************/
 /******       Tests of the method validateAjax         *******/
 /*************************************************************/
@@ -615,6 +679,14 @@ test("Exception thrown", function() {
         $("form#test").checkform({beforeValidate: 'fakeValue'});
     }, /value (.*)not allowed for beforeValidate/i,
             "beforeValidate : Exception thrown when a function was expected");
+    throws(function() {
+        $("form#test").checkform({afterItemValidate: 'fakeValue'});
+    }, /value (.*)not allowed for afterItemValidate/i,
+            "afterItemValidate : Exception thrown when a function was expected");
+    throws(function() {
+        $("form#test").checkform({beforeItemValidate: 'fakeValue'});
+    }, /value (.*)not allowed for beforeItemValidate/i,
+            "beforeItemValidate : Exception thrown when a function was expected");
 });
 
 function bindContext(ind) {

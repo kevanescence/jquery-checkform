@@ -119,7 +119,7 @@
                 <h3>Default configuration</h3>
                 <div class="col-md-3">
                     <div class="example-wrapper">
-<form id="default-conf" action="#">
+<form id="default-conf" action="#" method="POST">
     <fieldset>
         <legend>Sign in</legend>
         <div class="input-group">
@@ -172,7 +172,7 @@
                 <h3>Custom the event and use a specific CSS</h3>
                 <div class="col-md-3">
                     <div class="example-wrapper">
-<form id="example2" action="#">
+<form id="example2" action="#" method="POST">
     <fieldset>
         <legend>Sign in</legend>
         <div class="input-group">                        
@@ -228,7 +228,7 @@
                 <h3>Custom your items</h3>
                 <div class="col-md-3">
                     <div class="example-wrapper">
-<form id="example3" action="#">
+<form id="example3" action="#" method="POST">
     <fieldset>
         <legend>Sign in</legend>
         <div class="input-group">
@@ -292,7 +292,7 @@
                 </div>
                 <div class="col-md-3">
                     <div class="example-wrapper">
-<form id="example4" action="#">
+<form id="example4" action="#" method="POST">
     <fieldset>
         <legend>Sign in</legend>
         <div class="input-group">
@@ -387,12 +387,26 @@ $('form#example4').checkform({
                             </thead>
                             <tbody>
                             <tr>
+                                <td>afterItemValidate</td>
+                                <td>function</td>
+                                <td>null</td>
+                                <td>
+                                    A function to be executed after a field has 
+                                    been validated. <span class="important">
+                                    If the field is wrong, this function
+                                    won't be executed. </span>The element which 
+                                    the function is called on is given as first
+                                    argument at the function call.
+                                </td>
+                                <td>1.2+</td>
+                            </tr>
+                            <tr>
                                 <td>afterValidate</td>
                                 <td>function</td>
                                 <td>null</td>
                                 <td>
-                                    A function to be executed after the form has 
-                                    been validated. <span class="important">
+                                    Similar as afterItemValidate function but
+                                    at the form level. <span class="important">
                                     If at least one field is wrong, this function
                                     won't be executed. </span>
                                     This function has to return true to let the 
@@ -458,13 +472,23 @@ $('form#example4').checkform({
                                 </td>
                             </tr>
                             <tr>
+                                <td>beforeItemValidate</td>
+                                <td>function</td>
+                                <td>null</td>
+                                <td>
+                                    A function to be executed before a field is
+                                    validated. The checking method will always be
+                                    executed.
+                                </td>
+                                <td>1.2+</td>
+                            </tr>
+                            <tr>
                                 <td>beforeValidate</td>
                                 <td>function</td>
                                 <td>null</td>
                                 <td>
-                                    A function to be executed before the form is
-                                    validated. The checking method will always be
-                                    executed.
+                                    Similar as beforeItemValidate but at the 
+                                    form level.
                                 </td>
                                 <td>1.2+</td>
                             </tr>
@@ -734,14 +758,14 @@ $('form#example4').checkform({
                                     New features :
                                     <ul>
                                         <li>a function specified in parameter can be executed
-                                            before validating the form</li>
-                                        <li>trim items before checking</li>
-                                        <li>html5 uiAction type</li>
+                                            before, after validating a field
+                                            or the form</li>
+                                        <li>trim items before checking</li>                                        
                                         <li>ajax checking</li>                        
                                     </ul>
                                 </td>
                                 <td>1.2</td>
-                                <td>04/21/2014</td>                
+                                <td>08/02/2014</td>                
                             </tr>
                             <tr>
                                 <td>Add an "afterValidate" option</td>
@@ -755,10 +779,6 @@ $('form#example4').checkform({
                             </tr>
                         </table>
                     </div>
-                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, 
-                        tellus ac cursus commodo, tortor mauris condimentum nibh, ut 
-                        fermentum massa justo sit amet risus. Etiam porta sem malesuada 
-                        magna mollis euismod. Donec sed odio dui. </p>
                     <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
                 </div>
             </div>
@@ -767,9 +787,7 @@ $('form#example4').checkform({
                 <p>Plugin developped by Kevin REMY. Plugin under the MIT licence.</p>
             </footer>
         </div>
-
-        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>-->
+        
         <script type="text/javascript" src="../js/jquery1.7.1.min.js"></script>
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <script src="js/bootstrap.min.js"></script>       

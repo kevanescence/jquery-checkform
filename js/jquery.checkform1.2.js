@@ -127,10 +127,6 @@ function jqchf_getTemplateNewItem(){
         target: null, //? really needed
         ajaxURL: null,
         ajaxEvent:['submit','lostfocus','change'],
-        afterValidate: function(){return true;},
-        beforeValidate: function(){return true;},
-        afterItemValidate: function($item){return true;},
-        beforeItemValidate: function($item){return true;}
     };
 
     /*************************************************************/
@@ -258,8 +254,7 @@ function jqchf_getTemplateNewItem(){
                 var res = form.data("jqchf-form-ok") ;
                 if(form.data("jqchf-form-opt").ajaxURL) {
                     res = res && form.data("jqchf-form-ajax-ok");
-                }
-                console.log(res);
+                }                
                 if(res !== false)
                     return form.data("jqchf-form-opt").afterValidate();
                 return false;
@@ -273,7 +268,8 @@ function jqchf_getTemplateNewItem(){
                 var rule = input.data("jqchf-reg");
                 var reg = new RegExp(rule);                                
                 if(input.data("jqchf-trim") === true){
-                    input.data("jqchf-ok",reg.test(input.val().trim()));
+                    input.val(input.val().trim());                    
+                    input.data("jqchf-ok",reg.test(input.val()));
                 }
                 else {
                     input.data("jqchf-ok",reg.test(input.val()));
@@ -301,21 +297,14 @@ function jqchf_getTemplateNewItem(){
         },
         validate:function($item){          
             var form = $(this);
-//            var beforeValidate = form.data("jqchf-form-opt").beforeValidate;    
             if($item){
                 $item = $($item);
-//                form.data("jqchf-form-opt").beforeItemValidate($item);
                 form.checkform("check",$item);
                 form.checkform("uiAction",$item);
-//                if(form.data("jqchf-form-ok") === true)
-//                    form.data("jqchf-form-opt").afterItemValidate($item);
             }
             else {                                            
-//                beforeValidate();
                 form.checkform("check");
                 form.checkform("uiAction");
-//                if(form.data("jqchf-form-ok") === true)
-//                    form.data("jqchf-form-opt").afterValidate();
             }
         }, 
         uiAction:function($item){
