@@ -5,7 +5,7 @@ Tired of javascript form validation ?
 This Jquery plug-in provides various HTML form validation styles (events, ui styles, ajax...). 
 It includes also a set of default patterns for the most common fields to be checked. 
 
----------------- How to use it ? -------------------------
+<h1>How to use it ?</h1>
 
 Jquery checkform plugin is based on conventional naming rules for input's name attribute.
 If you respect these rules, you will only have to add the following javascript line
@@ -14,18 +14,18 @@ If you respect these rules, you will only have to add the following javascript l
   
 For more complicated cases or to custom the default patterns, have a look at the documentation page
 
----------------- Description of files -------------------------
+<h1>Description of files</h1>
 
-css/
-  contains the bootstrap css and the demonstration page css
-doc/
-  documentation and demonstration pages. To run all examples, specially the ajax one, plugin directory must by placed
-  at a web server root.
-  
-  $ ls /var/www/html/jquery-checkform/
-    css  doc  images  js  tests
+<h2>css</h2>/<br/>
+contains the bootstrap css and the demonstration page css
+doc/<br/>
+documentation and demonstration pages. To run all examples, specially the ajax one, plugin directory must by placed
+at a web server root.
 
-images/
+$ ls /var/www/html/jquery-checkform/
+  css  doc  images  js  tests
+
+images/<br/>
   some basic pictures and icons for the demo page
 js/
   javascript file : jquery, bootstrap and the plugin
