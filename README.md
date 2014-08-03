@@ -20,8 +20,8 @@ For more complicated cases or to custom the default patterns, have a look at the
 contains the bootstrap css and the demonstration page css
 <h3>doc/</h3>
 documentation and demonstration pages. To run all examples, specially the ajax one, plugin directory must by placed
-at a web server root.
-$ ls /var/www/html/jquery-checkform/
+at a web server root: <br/>
+$ ls /var/www/html/jquery-checkform/ <br/>
   css  doc  images  js  tests
 <h3>images/</h3>
   some basic pictures and icons for the demo page
