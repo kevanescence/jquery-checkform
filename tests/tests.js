@@ -1,5 +1,14 @@
-test("Check qunit", function() {
-    ok(true, "Should always pass !");
+test("Check qunit and define function for Junit transform", function() { 
+    ok(true, "Should always pass")
+    QUnit.jUnitReport = function(report) {        
+        $.ajax( {url:"generateJunit.php",
+                 data:report.xml,
+                 type: 'POST'} ).done(function(ans) {            
+            //ok(true, "junit report has been sent to server");
+        });
+        console.log(report.xml);        
+    };
+    ok(QUnit.junitReport !== null, "Define function has been done!");
 });
 /*************************************************************/
 /******       Tests of the init method                 *******/
