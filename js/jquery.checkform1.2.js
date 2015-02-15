@@ -484,7 +484,7 @@ function jqchf_getTemplateNewItem(){
                 $.error('Jquery checkform : tag ' + this.tagName + ' not allowed');
             //Is it a method call ?
             if (methods[args]) {
-                return methods[args].apply(this,item);
+                return methods[args].apply(this,[item]);
                        // Array.prototype.slice.call(arguments, 1));
             } else if (typeof args === 'object' || !args) {                
                 // Default call to "init"                   

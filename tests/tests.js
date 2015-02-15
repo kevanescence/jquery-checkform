@@ -1,12 +1,13 @@
 test("Check qunit and define function for Junit transform", function() { 
     ok(true, "Should always pass")
     QUnit.jUnitReport = function(report) {        
-        $.ajax( {url:"generateJunit.php",
-                 data:report.xml,
-                 type: 'POST'} ).done(function(ans) {            
-            //ok(true, "junit report has been sent to server");
-        });
-        console.log(report.xml);        
+//        $.ajax( {url:"generateJunit.php",
+//                 data:report.xml,
+//                 type: 'POST'} ).done(function(ans) {            
+//            //ok(true, "junit report has been sent to server");
+//        });
+//        console.log(report.xml);     
+       $('div#tests-result').attr('data-junit', report.xml);
     };
     ok(QUnit.junitReport !== null, "Define function has been done!");
 });
@@ -464,7 +465,7 @@ test("beforeItemValidate and afterItemValidate", function(){
 /*************************************************************/
 /******       Tests of the method validateAjax         *******/
 /*************************************************************/
-module("Method : validateAjax");
+/*module("Method : validateAjax");
 asyncTest("ajax checking is retrieved", function(){  
     var AJAX_TIMEOUT = 5;
     var defItems = jqchf_getDefaultItems();
@@ -564,6 +565,7 @@ asyncTest("uiAction display a previous retrieved ajax message",function(){
         removeContext(indContext);                
     },AJAX_TIMEOUT);
 });
+*/
 /*************************************************y************/
 /******       Tests of the method destroy              *******/
 /*************************************************************/
