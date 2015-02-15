@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 var page = require('webpage').create();
-page.open('test.html', function(status) {
+page.open('tests/test.html', function(status) {
   if(status === "success") {
     setTimeout(function() {
         var junitXML = page.evaluate(function() {
