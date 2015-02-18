@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 var page = require('webpage').create();
+page.viewportSize = { width: 1920, height: 1080 };
 page.open('tests/test.html', function(status) {
   if(status === "success") {
     setTimeout(function() {

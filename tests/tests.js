@@ -465,7 +465,7 @@ test("beforeItemValidate and afterItemValidate", function(){
 /*************************************************************/
 /******       Tests of the method validateAjax         *******/
 /*************************************************************/
-/*module("Method : validateAjax");
+module("Method : validateAjax");
 asyncTest("ajax checking is retrieved", function(){  
     var AJAX_TIMEOUT = 5;
     var defItems = jqchf_getDefaultItems();
@@ -473,7 +473,7 @@ asyncTest("ajax checking is retrieved", function(){
     var indContext = 3;
     var form = bindContext(indContext);
     form.checkform({
-       ajaxURL:'ajax.php',
+       ajaxURL:TESTS_ROOT + 'tests/ajax.php',
        ajaxEvent:'submit',
        items:{
            'new':{
@@ -565,7 +565,7 @@ asyncTest("uiAction display a previous retrieved ajax message",function(){
         removeContext(indContext);                
     },AJAX_TIMEOUT);
 });
-*/
+
 /*************************************************y************/
 /******       Tests of the method destroy              *******/
 /*************************************************************/
