@@ -473,7 +473,7 @@ asyncTest("ajax checking is retrieved", function(){
     var indContext = 3;
     var form = bindContext(indContext);
     form.checkform({
-       ajaxURL:TESTS_ROOT + 'tests/ajax.php',
+       ajaxURL:TESTS_ROOT + 'ajax.php',
        ajaxEvent:'submit',
        items:{
            'new':{
@@ -531,7 +531,7 @@ asyncTest("uiAction display a previous retrieved ajax message",function(){
     var indContext = 2;
     var form = bindContext(indContext);
     form.checkform({
-       ajaxURL:TESTS_ROOT + 'tests/ajax.php',
+       ajaxURL:TESTS_ROOT + 'ajax.php',
        ajaxEvent:'submit',
        items:{
            name:{
