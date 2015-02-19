@@ -531,7 +531,7 @@ asyncTest("uiAction display a previous retrieved ajax message",function(){
     var indContext = 2;
     var form = bindContext(indContext);
     form.checkform({
-       ajaxURL:'ajax.php',
+       ajaxURL:TESTS_ROOT + 'tests/ajax.php',
        ajaxEvent:'submit',
        items:{
            name:{
